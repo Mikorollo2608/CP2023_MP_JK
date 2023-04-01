@@ -5,7 +5,12 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic", "Logic\Logic.csproj", "{7C1D41E9-20CE-431C-8A91-5045C200AE03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLogic", "TestLogic\TestLogic.csproj", "{AAC72CEF-7207-4776-837A-B7ACD0E7EE5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestLogic", "TestLogic\TestLogic.csproj", "{AAC72CEF-7207-4776-837A-B7ACD0E7EE5B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "Elementy rozwiązania", "{EC999BB6-1D80-4D1A-86C8-C9CCFB96F91E}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
