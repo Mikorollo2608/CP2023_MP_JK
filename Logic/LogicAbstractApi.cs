@@ -33,16 +33,16 @@
 
         public override void CreateBall(int x, int y)
         {
-            Balls.Add(new Ball(x, y, 0, 0));
+            Balls.Add(new Ball(x, y));
         }
 
         public override int GetX(int BallNumber)
         {
-            return Balls[BallNumber].getX();
+            return Balls[BallNumber].GetX();
         }
         public override int GetY(int BallNumber)
         {
-            return Balls[BallNumber].getY();
+            return Balls[BallNumber].GetY();
         }
         public override int GetBallCount()
         {
