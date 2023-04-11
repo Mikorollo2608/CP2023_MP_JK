@@ -35,6 +35,6 @@ namespace Logic
 
         public PropertyChangedEventHandler GetPublisher() { return PropertyChanged; }
 
-        public void Dispose() { BallTimer.Dispose(); }
+        public void Dispose() { BallTimer.Dispose(); PropertyChanged = null; }
     }
 }
