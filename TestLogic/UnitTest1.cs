@@ -6,55 +6,25 @@ namespace TestLogic
     public class UnitTest1
     {
         [TestMethod]
-        public void TestGetters()
+        public void TestBallMove()
         {
-            Ball ball = new Ball(5, 8, 1, 2);
-
-            Assert.IsNotNull(ball);
-            Assert.AreEqual(5, ball.getX());
-            Assert.AreEqual(8, ball.getY());
-            Assert.AreEqual(1, ball.getVelocityX());
-            Assert.AreEqual(2, ball.getVelocityY());
-
-            Assert.AreEqual(5, Ball.radius);
+            Ball ball = new Ball(0, 0, null);
+            int x = ball.X;
+            int y = ball.Y;
+            Thread.Sleep(150);
+            Assert.AreNotEqual(x, ball.X);
+            Assert.AreNotEqual(y, ball.Y);
         }
 
-        [TestMethod]
-        public void TestSetters()
+        public void TestSimulationBoardKeepBallInbound()
         {
-            Ball ball = new Ball(1, 1, 5, 6);
-
-            Assert.AreEqual(5, ball.getVelocityX());
-            Assert.AreEqual(6, ball.getVelocityY());
-
-            ball.setVelocityX(10);
-            ball.setVelocityY(13);
-
-            Assert.AreEqual(10, ball.getVelocityX());
-            Assert.AreEqual(13, ball.getVelocityY());
-        }
-
-        [TestMethod]
-        public void TestMove()
-        {
-            Ball ball = new Ball(12, 15, 3, 2);
-            int borderX = 100;
-            int borderY = 80;
-
-            Assert.AreEqual(12, ball.getX());
-            Assert.AreEqual(15, ball.getY());
-            
-            //Test normal move
-            ball.move(borderX, borderY);
-            Assert.AreEqual(15, ball.getX());
-            Assert.AreEqual(17, ball.getY());
-
-            //Test move outside one border
-            ball.setVelocityX(100);
-            ball.move(borderX, borderY);
-            Assert.AreEqual(95, ball.getX());
-            Assert.AreEqual(-100, ball.getVelocityX());
-            Assert.AreEqual(19, ball.getY());
+            LogicAbstractApi board = LogicAbstractApi.CreateLogicApi(5,100,100);
+            board.CreateBall(0, 0);
+            Thread.Sleep(150);
+            int x = board.GetX(0);
+            int y = board.GetY(0);
+            Assert.IsTrue(x >= 5, "X is " + x);
+            Assert.IsTrue(y >= 5, "Y is " + x);
         }
     }
 }

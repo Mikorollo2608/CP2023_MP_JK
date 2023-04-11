@@ -1,24 +1,40 @@
-﻿namespace Logic
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace Logic
 {
-    public class Ball
+    public class Ball : IDisposable, INotifyPropertyChanged
     {
+        //PropertyChanged is fired when ball moves
+        public event PropertyChangedEventHandler PropertyChanged;
         private Random random = new Random();
-        private int x;
-        private int y;
+        public int X { get; set; }
+        public int Y { get; set; }
 
-        public  Ball(int x, int y)
+        private Timer BallTimer;
+
+        public Ball(int x, int y, PropertyChangedEventHandler function)
         {
-            this.x = x;
-            this.y = y;
+            X = x;
+            Y = y;
+            BallTimer = new Timer(Move, null, 0, 150);
+            PropertyChanged += function;
         }
 
-        public int GetX() { return x; }
-        public int GetY() { return y; }
-
-        private void Move()
+        private void Move(object? state)
         {
-            x += random.Next(21) - 10;
-            y += random.Next(21) - 10;
+            X += random.Next(21) - 10;
+            Y += random.Next(21) - 10;
+            OnPropertyChanged();
         }
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public PropertyChangedEventHandler GetPublisher() { return PropertyChanged; }
+
+        public void Dispose() { BallTimer.Dispose(); }
     }
 }
