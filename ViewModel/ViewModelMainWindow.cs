@@ -1,5 +1,6 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Shapes;
 using Model;
 
 namespace ViewModel
@@ -14,11 +15,13 @@ namespace ViewModel
 
         public ViewModelMainWindow()
         {
-            ModelApi = ModelAbstractApi.CreateApi(10, 500, 500);
+            ModelApi = ModelAbstractApi.CreateApi(50, 500, 500);
             // ??
             // IDisposable observer = ModelApi.Subscribe<>
             AddCommand = new RelayCommand(Start);
             StopCommand = new RelayCommand(Stop);
+
+            ModelApi.CreateEllipses(2);
         }
 
 
@@ -41,7 +44,10 @@ namespace ViewModel
 
         public Canvas Canvas
         {
-            get => ModelApi.Canvas;
+            get
+            {
+                return ModelApi.Canvas;
+            }
         }
 
 

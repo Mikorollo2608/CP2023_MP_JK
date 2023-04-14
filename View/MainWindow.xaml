@@ -4,32 +4,33 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View"
+        xmlns:vm="clr-namespace:ViewModel;assembly=ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="800">
+        Title="ElasticCollision" Height="900" Width="900" ResizeMode="NoResize">
+
+    <Window.DataContext>
+        <vm:ViewModelMainWindow/>
+    </Window.DataContext>
+
     <Grid>
         <Border BorderThickness="5" BorderBrush="Black" Height="500" Width="500">
-            <ItemsControl ItemsSource="{Binding Balls}">
+           <!-- <ItemsControl ItemsSource="{Binding Balls}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Ellipse Width= "{Binding Diameter}" Height="{Binding Diameter}" Fill="Blue" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
                         <Setter Property="Canvas.Top" Value="{Binding Top}" />
                         <Setter Property="Canvas.Left" Value="{Binding Left}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
-            </ItemsControl>
+            </ItemsControl>-->
         </Border>
-
-        <TextBox x:Name="ballsNumberBox"  Text="{Binding ballsNumber}" Margin="0,52,0,692" Width="200" Height="40" TextAlignment="Center" FontSize="24px" BorderBrush="Black" BorderThickness="4"/>
-        <Button x:Name= "addButton" Margin="536,52,122,692" Content="ADD" FontSize="24px" FontWeight="Bold" Background="#9ee272" Command="{Binding AddCommand}"></Button>
-        <Button x:Name= "stopButton" Margin="330,692,330,52" Content="STOP" FontSize="24px" FontWeight="Bold" Background="#e67969" Command="{Binding StopCommand}"></Button>
+        <ContentPresenter Content="{Binding Canvas}"/>
+        <TextBox x:Name="ballsNumberBox" Text="{Binding BallsNumber}" Margin="0,52,0,692" Width="200" Height="40" TextAlignment="Center" FontSize="24px" BorderBrush="Black" BorderThickness="4"/>
+        <Button x:Name= "addButton" Margin="536,52,122,692" Width="100" Height="40" Content="ADD" FontSize="24px" FontWeight="Bold" Background="#9ee272" Command="{Binding AddCommand}"></Button>
+        <Button x:Name= "stopButton" Margin="330,692,330,52" Width="100" Height="40" Content="STOP" FontSize="24px" FontWeight="Bold" Background="#e67969" Command="{Binding StopCommand}"></Button>
     </Grid>
 </Window>

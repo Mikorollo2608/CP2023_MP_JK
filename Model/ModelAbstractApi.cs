@@ -57,7 +57,7 @@ namespace Model
                 Ellipse ellipse = new Ellipse();
                 ellipse.Width = BallRadius;
                 ellipse.Height = BallRadius;
-                ellipse.Fill = Brushes.Blue;
+                ellipse.Fill = Brushes.Red;
                 //Canvas.SetLeft(ellipse, simulation.GetX(i));
                 //Canvas.SetTop(ellipse, simulation.GetY(i));
                 ellipseCollection.Add(ellipse);
@@ -68,7 +68,9 @@ namespace Model
         {
             CreateEllipses(2);
         }
-        public override void Stop() { }
+        public override void Stop() 
+        {
+        }
         public override void Move() { }
     }
 }
