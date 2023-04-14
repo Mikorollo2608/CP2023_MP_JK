@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -27,7 +26,7 @@ namespace Model
 
     internal class PresentationModel : ModelAbstractApi
     {
-        private LogicAbstractApi simulation;
+        private LogicAbstractApi Simulation;
 
         public override int BallRadius { get; }
         public override int BoardWidth { get; }
@@ -40,7 +39,7 @@ namespace Model
             this.BallRadius = BallRadius;
             this.BoardWidth = BoardWidth;
             this.BoardHeight = BoardHeight;
-            simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth, this.BoardHeight);
+            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth, this.BoardHeight);
             Canvas = new Canvas();
             Canvas.Width = this.BoardWidth;
             Canvas.Height = this.BoardHeight;
@@ -54,7 +53,7 @@ namespace Model
             Random random = new Random();
             for (int i = 0; i < BallsNumber; i++)
             {
-                simulation.CreateBall(random.Next(100, 2 * (BoardWidth - BallRadius)), random.Next(100, 2 * (BoardWidth - BallRadius)));
+                Simulation.CreateBall(random.Next(100, 2 * (BoardWidth - BallRadius)), random.Next(100, 2 * (BoardWidth - BallRadius)));
                 Ellipse ellipse = new Ellipse();
                 ellipse.Width = BallRadius;
                 ellipse.Height = BallRadius;
@@ -62,9 +61,13 @@ namespace Model
                 //Canvas.SetLeft(ellipse, simulation.GetX(i));
                 //Canvas.SetTop(ellipse, simulation.GetY(i));
                 ellipseCollection.Add(ellipse);
+                Canvas.Children.Add(ellipse);
             }
         }
-        public override void Start() { }
+        public override void Start() 
+        {
+            CreateEllipses(2);
+        }
         public override void Stop() { }
         public override void Move() { }
     }
