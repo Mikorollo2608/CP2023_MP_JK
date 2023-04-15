@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Data;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Logic
@@ -26,6 +27,8 @@ namespace Logic
         public override int BallRadius { get; }
         public override int BoardWidth { get; }
         public override int BoardHeight { get; }
+
+        private DataAbstractApi DataApi = DataAbstractApi.CreateApi();
 
         public SimulationBoard(int Radius, int Width, int Height)
         {
