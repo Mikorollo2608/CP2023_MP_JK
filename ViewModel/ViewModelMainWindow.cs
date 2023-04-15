@@ -1,6 +1,5 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Shapes;
 using Model;
 
 namespace ViewModel
@@ -8,7 +7,7 @@ namespace ViewModel
     public class ViewModelMainWindow : ViewModelBase
     {
         private ModelAbstractApi ModelApi;
-        private int _BallsNumber;
+        private int _BallsNumber = 5;
 
         public ICommand AddCommand { get; set; }
         public ICommand StopCommand { get; set; }
@@ -50,6 +49,7 @@ namespace ViewModel
         private void Start()
         {
             ModelApi.Start(BallsNumber);
+            BallsNumber = 0;
         }
         private void Stop()
         {

@@ -27,6 +27,10 @@ namespace Model
     internal class PresentationModel : ModelAbstractApi
     {
         private LogicAbstractApi Simulation;
+        private readonly int StartOffsetX = -20;
+        private readonly int EndOffsetX = -4;
+        private readonly int StartOffsetY = 161;
+        private readonly int EndOffsetY = 177;
 
         public override int BallRadius { get; }
         public override int BoardWidth { get; }
@@ -39,7 +43,7 @@ namespace Model
             this.BallRadius = BallRadius;
             this.BoardWidth = BoardWidth;
             this.BoardHeight = BoardHeight;
-            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth, this.BoardHeight);
+            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth + BallRadius, this.BoardHeight + BallRadius);
             Canvas = new Canvas();
             Canvas.Width = this.BoardWidth;
             Canvas.Height = this.BoardHeight;
@@ -53,13 +57,13 @@ namespace Model
             Random random = new Random();
             for (int i = 0; i < BallsNumber; i++)
             {
-                Simulation.CreateBall(random.Next(0, (BoardWidth - BallRadius) - 4), random.Next(186, 177 + (BoardHeight - BallRadius)));
+                Simulation.CreateBall(random.Next(0, BoardWidth), random.Next(0, BoardHeight));
                 Ellipse ellipse = new Ellipse();
                 ellipse.Width = BallRadius;
                 ellipse.Height = BallRadius;
                 ellipse.Fill = Brushes.Red;
-                Canvas.SetLeft(ellipse, Simulation.GetX(i));
-                Canvas.SetTop(ellipse, Simulation.GetY(i));
+                Canvas.SetLeft(ellipse, correctPosition(Simulation.GetX(i), StartOffsetX + BallRadius, EndOffsetX));
+                Canvas.SetTop(ellipse, correctPosition(Simulation.GetY(i), StartOffsetY + BallRadius, EndOffsetY));
                 ellipseCollection.Add(ellipse);
                 Canvas.Children.Add(ellipse);
             }
@@ -75,9 +79,21 @@ namespace Model
         {
             for (int i = 0; i < Simulation.GetBallCount(); i++)
             {
-                Canvas.SetLeft(ellipseCollection[i], Simulation.GetX(i));
-                Canvas.SetTop(ellipseCollection[i], Simulation.GetY(i));
+                Canvas.SetLeft(ellipseCollection[i], correctPosition(Simulation.GetX(i), StartOffsetX, EndOffsetX));
+                Canvas.SetTop(ellipseCollection[i], correctPosition(Simulation.GetY(i), StartOffsetY, EndOffsetY));
             }
+
+        }
+
+        private int correctPosition(int Value, int StartOffset, int EndOffset)
+        {
+            int newValue = Value + StartOffset;
+
+            if (newValue + BallRadius > BoardWidth + EndOffset)
+            {
+                newValue = BoardWidth - BallRadius + EndOffset;
+            }
+            return newValue;
         }
     }
 }
