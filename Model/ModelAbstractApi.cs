@@ -14,7 +14,7 @@ namespace Model
         public abstract Canvas Canvas { get; set; }
         public abstract List<Ellipse> ellipseCollection { get; }
         public abstract void CreateEllipses(int BallsNumber);
-        public abstract void Start();
+        public abstract void Start(int BallsNumber);
         public abstract void Stop();
         public abstract void Move();
 
@@ -53,7 +53,7 @@ namespace Model
             Random random = new Random();
             for (int i = 0; i < BallsNumber; i++)
             {
-                Simulation.CreateBall(random.Next(100, 2 * (BoardWidth - BallRadius)), random.Next(100, 2 * (BoardWidth - BallRadius)));
+                Simulation.CreateBall(random.Next(0, (BoardWidth - BallRadius) - 4), random.Next(186, 177 + (BoardHeight - BallRadius)));
                 Ellipse ellipse = new Ellipse();
                 ellipse.Width = BallRadius;
                 ellipse.Height = BallRadius;
@@ -64,13 +64,20 @@ namespace Model
                 Canvas.Children.Add(ellipse);
             }
         }
-        public override void Start() 
+        public override void Start(int BallsNumber) 
         {
-            CreateEllipses(2);
+            CreateEllipses(BallsNumber);
         }
         public override void Stop() 
         {
         }
-        public override void Move() { }
+        public override void Move()
+        {
+            for (int i = 0; i < Simulation.GetBallCount(); i++)
+            {
+                Canvas.SetLeft(ellipseCollection[i], Simulation.GetX(i));
+                Canvas.SetTop(ellipseCollection[i], Simulation.GetY(i));
+            }
+        }
     }
 }

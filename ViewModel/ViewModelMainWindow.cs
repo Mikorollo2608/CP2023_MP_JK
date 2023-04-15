@@ -15,16 +15,12 @@ namespace ViewModel
 
         public ViewModelMainWindow()
         {
-            ModelApi = ModelAbstractApi.CreateApi(50, 500, 500);
+            ModelApi = ModelAbstractApi.CreateApi(25, 500, 500);
             // ??
             // IDisposable observer = ModelApi.Subscribe<>
             AddCommand = new RelayCommand(Start);
             StopCommand = new RelayCommand(Stop);
-
-            ModelApi.CreateEllipses(2);
         }
-
-
 
         public int BallsNumber
         {
@@ -53,11 +49,11 @@ namespace ViewModel
 
         private void Start()
         {
-            ModelApi.Start();
+            ModelApi.Start(BallsNumber);
         }
         private void Stop()
         {
-            ModelApi.Start();
+            ModelApi.Stop();
         }
 
     }
