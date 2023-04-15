@@ -58,8 +58,8 @@ namespace Model
                 ellipse.Width = BallRadius;
                 ellipse.Height = BallRadius;
                 ellipse.Fill = Brushes.Red;
-                //Canvas.SetLeft(ellipse, simulation.GetX(i));
-                //Canvas.SetTop(ellipse, simulation.GetY(i));
+                Canvas.SetLeft(ellipse, Simulation.GetX(i));
+                Canvas.SetTop(ellipse, Simulation.GetY(i));
                 ellipseCollection.Add(ellipse);
                 Canvas.Children.Add(ellipse);
             }
