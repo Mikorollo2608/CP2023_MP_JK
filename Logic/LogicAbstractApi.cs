@@ -64,12 +64,20 @@ namespace Logic
 
         public override void Start()
         {
-            IsSimulationRunning= true;
+            IsSimulationRunning = true;
+            foreach (Ball ball in Balls)
+            {
+                ball.Start();
+            }
         }
 
         public override void Stop()
         {
             IsSimulationRunning = false;
+            foreach (Ball ball in Balls)
+            {
+                ball.Stop();
+            }
         }
 
         protected void OnBallMoved(int index)
