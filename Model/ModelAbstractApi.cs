@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Logic;
 
 namespace Model
@@ -16,7 +18,9 @@ namespace Model
         public abstract void CreateEllipses(int BallsNumber);
         public abstract void Start(int BallsNumber);
         public abstract void Stop();
-        public abstract void Move();
+        public abstract void MoveAll();
+
+        public abstract void Move(int index);
 
         public static ModelAbstractApi CreateApi(int BallRadius, int BoardWidth, int BoardHeight)
         {
@@ -43,7 +47,7 @@ namespace Model
             this.BallRadius = BallRadius;
             this.BoardWidth = BoardWidth;
             this.BoardHeight = BoardHeight;
-            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth + BallRadius, this.BoardHeight + BallRadius);
+            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth + BallRadius, this.BoardHeight + BallRadius, Move);
             Canvas = new Canvas();
             Canvas.Width = this.BoardWidth;
             Canvas.Height = this.BoardHeight;
@@ -75,7 +79,7 @@ namespace Model
         public override void Stop() 
         {
         }
-        public override void Move()
+        public override void MoveAll()
         {
             for (int i = 0; i < Simulation.GetBallCount(); i++)
             {
@@ -84,6 +88,17 @@ namespace Model
             }
 
         }
+
+        public override void Move(int index)
+        {
+            var left = correctPosition(Simulation.GetX(index), StartOffsetX, EndOffsetX);
+            var right = correctPosition(Simulation.GetY(index), StartOffsetY, EndOffsetY);
+            Application.Current.Dispatcher.Invoke(new Action (() => {
+                Canvas.SetLeft(ellipseCollection[index], left);
+                Canvas.SetTop(ellipseCollection[index], right);
+            }));
+        }
+
 
         private int correctPosition(int Value, int StartOffset, int EndOffset)
         {

@@ -6,12 +6,13 @@ namespace TestLogic
     public class LogicApiTest
     {
 
-        internal void Foo(Ball ball) { Console.WriteLine("Do nothing"); }
+        internal void BallChangedBall(Ball ball) { Console.WriteLine("Do nothing"); }
+        internal void BallChangedLogic(int index) { Console.WriteLine(index); }
 
         [TestMethod]
         public void TestSimulationBoardKeepBallInbound()
         {
-            LogicAbstractApi board = LogicAbstractApi.CreateLogicApi(5,100,100);
+            LogicAbstractApi board = LogicAbstractApi.CreateLogicApi(5,100,100, BallChangedLogic);
             board.CreateBall(50, 50);
             Thread.Sleep(150);
             int x = board.GetX(0);
@@ -23,7 +24,7 @@ namespace TestLogic
         [TestMethod]
         public void TestBallMove()
         {
-            Ball ball = new Ball(0, 0, Foo);
+            Ball ball = new Ball(0, 0, BallChangedBall);
             int x = ball.X;
             int y = ball.Y;
             Thread.Sleep(150);

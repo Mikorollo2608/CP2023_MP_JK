@@ -7,7 +7,6 @@ namespace Logic
 
     internal class Ball : IDisposable
     {
-        //PropertyChanged is fired when ball moves
         private Random random = new Random();
         public int X { get; set; }
         public int Y { get; set; }
@@ -19,7 +18,7 @@ namespace Logic
         {
             X = x;
             Y = y;
-            BallTimer = new Timer(Move, null, 0, 150);
+            BallTimer = new Timer(Move, null, 0, 100);
             BallMoved += function;
         }
 
