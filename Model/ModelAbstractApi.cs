@@ -35,6 +35,8 @@ namespace Model
         public override int BoardHeight { get; }
         public Canvas Canvas { get; set; }
 
+        private Random random = new Random();
+
         public override Border Border { get; set; }
         public override List<Ellipse> ellipseCollection { get; }
 
@@ -43,15 +45,15 @@ namespace Model
             this.BallRadius = BallRadius;
             this.BoardWidth = BoardWidth;
             this.BoardHeight = BoardHeight;
-            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth, this.BoardHeight, Move);
+            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth+BallRadius, this.BoardHeight + BallRadius, Move);
             Canvas = new Canvas();
             Border = new Border();
             Canvas.Width = this.BoardWidth;
             Canvas.Height = this.BoardHeight;
             Canvas.HorizontalAlignment = HorizontalAlignment.Center;
             Canvas.VerticalAlignment = VerticalAlignment.Center;
-            Border.Width = this.BoardWidth;
-            Border.Height = this.BoardHeight;
+            Border.Width = this.BoardWidth+10;
+            Border.Height = this.BoardHeight+10;
             Border.HorizontalAlignment = HorizontalAlignment.Center;
             Border.VerticalAlignment = VerticalAlignment.Center;
             Border.BorderThickness = new Thickness(5);
@@ -62,7 +64,6 @@ namespace Model
 
         public override void CreateEllipses(int BallsNumber) 
         {
-            Random random = new Random();
             for (int i = 0; i < BallsNumber; i++)
             {
                 Simulation.CreateBall(random.Next(0, BoardWidth), random.Next(0, BoardHeight));
@@ -70,6 +71,8 @@ namespace Model
                 ellipse.Width = BallRadius;
                 ellipse.Height = BallRadius;
                 ellipse.Fill = Brushes.Red;
+                ellipse.HorizontalAlignment = HorizontalAlignment.Center;
+                ellipse.VerticalAlignment = VerticalAlignment.Center;
                 Canvas.SetLeft(ellipse, correctPosition(Simulation.GetX(i), 0, 0));
                 Canvas.SetTop(ellipse, correctPosition(Simulation.GetY(i), 0, 0));
                 ellipseCollection.Add(ellipse);
