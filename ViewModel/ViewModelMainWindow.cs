@@ -31,11 +31,11 @@ namespace ViewModel
             }
         }
 
-        public Canvas Canvas
+        public Border Border
         {
             get
             {
-                return ModelApi.Canvas;
+                return ModelApi.Border;
             }
         }
 

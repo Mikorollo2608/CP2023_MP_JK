@@ -11,7 +11,7 @@ namespace Model
         public abstract int BallRadius { get; }
         public abstract int BoardWidth { get; }
         public abstract int BoardHeight { get; }
-        public abstract Canvas Canvas { get; set; }
+        public abstract Border Border{ get; set; }
         public abstract List<Ellipse> ellipseCollection { get; }
         public abstract void CreateEllipses(int BallsNumber);
         public abstract void Start(int BallsNumber);
@@ -29,15 +29,13 @@ namespace Model
     internal class PresentationModel : ModelAbstractApi
     {
         private LogicAbstractApi Simulation;
-        private readonly int StartOffsetX = -20;
-        private readonly int EndOffsetX = -4;
-        private readonly int StartOffsetY = 161;
-        private readonly int EndOffsetY = 177;
 
         public override int BallRadius { get; }
         public override int BoardWidth { get; }
         public override int BoardHeight { get; }
-        public override Canvas Canvas { get; set; }
+        public Canvas Canvas { get; set; }
+
+        public override Border Border { get; set; }
         public override List<Ellipse> ellipseCollection { get; }
 
         public PresentationModel(int BallRadius, int BoardWidth, int BoardHeight) 
@@ -45,12 +43,20 @@ namespace Model
             this.BallRadius = BallRadius;
             this.BoardWidth = BoardWidth;
             this.BoardHeight = BoardHeight;
-            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth + BallRadius, this.BoardHeight + BallRadius, Move);
+            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth, this.BoardHeight, Move);
             Canvas = new Canvas();
+            Border = new Border();
             Canvas.Width = this.BoardWidth;
             Canvas.Height = this.BoardHeight;
             Canvas.HorizontalAlignment = HorizontalAlignment.Center;
-            Canvas.VerticalAlignment = VerticalAlignment.Top;
+            Canvas.VerticalAlignment = VerticalAlignment.Center;
+            Border.Width = this.BoardWidth;
+            Border.Height = this.BoardHeight;
+            Border.HorizontalAlignment = HorizontalAlignment.Center;
+            Border.VerticalAlignment = VerticalAlignment.Center;
+            Border.BorderThickness = new Thickness(5);
+            Border.BorderBrush = Brushes.Green;
+            Border.Child = Canvas;
             ellipseCollection = new List<Ellipse>();
         }
 
@@ -64,8 +70,8 @@ namespace Model
                 ellipse.Width = BallRadius;
                 ellipse.Height = BallRadius;
                 ellipse.Fill = Brushes.Red;
-                Canvas.SetLeft(ellipse, correctPosition(Simulation.GetX(i), StartOffsetX + BallRadius, EndOffsetX));
-                Canvas.SetTop(ellipse, correctPosition(Simulation.GetY(i), StartOffsetY + BallRadius, EndOffsetY));
+                Canvas.SetLeft(ellipse, correctPosition(Simulation.GetX(i), 0, 0));
+                Canvas.SetTop(ellipse, correctPosition(Simulation.GetY(i), 0, 0));
                 ellipseCollection.Add(ellipse);
                 Canvas.Children.Add(ellipse);
             }
@@ -83,16 +89,16 @@ namespace Model
         {
             for (int i = 0; i < Simulation.GetBallCount(); i++)
             {
-                Canvas.SetLeft(ellipseCollection[i], correctPosition(Simulation.GetX(i), StartOffsetX, EndOffsetX));
-                Canvas.SetTop(ellipseCollection[i], correctPosition(Simulation.GetY(i), StartOffsetY, EndOffsetY));
+                Canvas.SetLeft(ellipseCollection[i], correctPosition(Simulation.GetX(i), 0, 0));
+                Canvas.SetTop(ellipseCollection[i], correctPosition(Simulation.GetY(i), 0, 0));
             }
 
         }
 
         public override void Move(int index)
         {
-            int left = correctPosition(Simulation.GetX(index), StartOffsetX, EndOffsetX);
-            int right = correctPosition(Simulation.GetY(index), StartOffsetY, EndOffsetY);
+            int left = correctPosition(Simulation.GetX(index),0, 0);
+            int right = correctPosition(Simulation.GetY(index), 0, 0);
             Application.Current.Dispatcher.Invoke(new Action (() => {
                 Canvas.SetLeft(ellipseCollection[index], left);
                 Canvas.SetTop(ellipseCollection[index], right);
@@ -102,12 +108,8 @@ namespace Model
 
         private int correctPosition(int Value, int StartOffset, int EndOffset)
         {
-            int newValue = Value + StartOffset;
+            int newValue = Value - BallRadius;
 
-            if (newValue + BallRadius > BoardWidth + EndOffset)
-            {
-                newValue = BoardWidth - BallRadius + EndOffset;
-            }
             return newValue;
         }
     }

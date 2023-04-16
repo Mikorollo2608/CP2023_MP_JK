@@ -14,7 +14,7 @@
 
     <Grid>
         <Border BorderThickness="5" BorderBrush="Black" Height="500" Width="500"></Border>
-        <ContentPresenter Content="{Binding Canvas}"/>
+        <ContentPresenter Content="{Binding Border}"/>
         <TextBox x:Name="ballsNumberBox" Text="{Binding BallsNumber}" Margin="0,52,0,692" Width="200" Height="40" TextAlignment="Center" FontSize="24px" BorderBrush="Black" BorderThickness="4"/>
         <Button x:Name= "addButton" Margin="536,52,122,692" Width="100" Height="40" Content="ADD" FontSize="24px" FontWeight="Bold" Background="#9ee272" Command="{Binding AddCommand}"></Button>
         <Button x:Name= "stopButton" Margin="330,692,330,52" Width="100" Height="40" Content="STOP" FontSize="24px" FontWeight="Bold" Background="#e67969" Command="{Binding StopCommand}"></Button>

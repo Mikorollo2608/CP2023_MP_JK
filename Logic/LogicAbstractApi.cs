@@ -88,9 +88,9 @@ namespace Logic
         private void KeepBallInbound(Ball ball)
         {
             if (ball.X - BallRadius < 0) { ball.X = 0 + BallRadius; }
-            else if (ball.X + BallRadius > BoardWidth) { ball.X = BoardWidth - BallRadius; }
+            else if (ball.X > BoardWidth) { ball.X = BoardWidth - BallRadius; }
             if (ball.Y - BallRadius < 0) { ball.Y = 0 + BallRadius; }
-            else if (ball.Y + BallRadius > BoardHeight) { ball.Y = BoardHeight - BallRadius; }
+            else if (ball.Y > BoardHeight) { ball.Y = BoardHeight - BallRadius; }
             OnBallMoved(Balls.FindIndex(a => a == ball));
 
             Console.WriteLine("keep " + ball.X + " " +ball.Y);
