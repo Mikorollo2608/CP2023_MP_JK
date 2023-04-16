@@ -16,7 +16,6 @@ namespace Model
         public abstract void CreateEllipses(int BallsNumber);
         public abstract void Start(int BallsNumber);
         public abstract void Stop();
-        public abstract void MoveAll();
 
         public abstract void Move(int index);
 
@@ -50,14 +49,12 @@ namespace Model
             Border = new Border();
             Canvas.Width = this.BoardWidth;
             Canvas.Height = this.BoardHeight;
-            Canvas.HorizontalAlignment = HorizontalAlignment.Center;
-            Canvas.VerticalAlignment = VerticalAlignment.Center;
-            Border.Width = this.BoardWidth+10;
-            Border.Height = this.BoardHeight+10;
+            Border.Width = this.BoardWidth + 10;
+            Border.Height = this.BoardHeight + 10;
             Border.HorizontalAlignment = HorizontalAlignment.Center;
             Border.VerticalAlignment = VerticalAlignment.Center;
             Border.BorderThickness = new Thickness(5);
-            Border.BorderBrush = Brushes.Green;
+            Border.BorderBrush = Brushes.Black;
             Border.Child = Canvas;
             ellipseCollection = new List<Ellipse>();
         }
@@ -71,10 +68,8 @@ namespace Model
                 ellipse.Width = BallRadius;
                 ellipse.Height = BallRadius;
                 ellipse.Fill = Brushes.Red;
-                ellipse.HorizontalAlignment = HorizontalAlignment.Center;
-                ellipse.VerticalAlignment = VerticalAlignment.Center;
-                Canvas.SetLeft(ellipse, correctPosition(Simulation.GetX(i), 0, 0));
-                Canvas.SetTop(ellipse, correctPosition(Simulation.GetY(i), 0, 0));
+                Canvas.SetLeft(ellipse, correctPosition(Simulation.GetX(i)));
+                Canvas.SetTop(ellipse, correctPosition(Simulation.GetY(i)));
                 ellipseCollection.Add(ellipse);
                 Canvas.Children.Add(ellipse);
             }
@@ -88,20 +83,11 @@ namespace Model
         {
             Simulation.Stop();
         }
-        public override void MoveAll()
-        {
-            for (int i = 0; i < Simulation.GetBallCount(); i++)
-            {
-                Canvas.SetLeft(ellipseCollection[i], correctPosition(Simulation.GetX(i), 0, 0));
-                Canvas.SetTop(ellipseCollection[i], correctPosition(Simulation.GetY(i), 0, 0));
-            }
-
-        }
 
         public override void Move(int index)
         {
-            int left = correctPosition(Simulation.GetX(index),0, 0);
-            int right = correctPosition(Simulation.GetY(index), 0, 0);
+            int left = correctPosition(Simulation.GetX(index));
+            int right = correctPosition(Simulation.GetY(index));
             Application.Current.Dispatcher.Invoke(new Action (() => {
                 Canvas.SetLeft(ellipseCollection[index], left);
                 Canvas.SetTop(ellipseCollection[index], right);
@@ -109,7 +95,7 @@ namespace Model
         }
 
 
-        private int correctPosition(int Value, int StartOffset, int EndOffset)
+        private int correctPosition(int Value)
         {
             int newValue = Value - BallRadius;
 

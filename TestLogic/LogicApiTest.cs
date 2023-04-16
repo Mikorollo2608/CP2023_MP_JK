@@ -6,8 +6,8 @@ namespace TestLogic
     public class LogicApiTest
     {
 
-        internal void BallChangedBall(Ball ball) { Console.WriteLine("Do nothing"); }
-        internal void BallChangedLogic(int index) { Console.WriteLine(index); }
+        internal void BallChangedBall(Ball ball) { }
+        internal void BallChangedLogic(int index) { }
 
         [TestMethod]
         public void TestSimulationBoardKeepBallInbound()

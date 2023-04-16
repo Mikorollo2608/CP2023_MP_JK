@@ -13,7 +13,6 @@
     </Window.DataContext>
 
     <Grid>
-        <Border BorderThickness="5" BorderBrush="Black" Height="500" Width="500"></Border>
         <ContentPresenter Content="{Binding Border}"/>
         <TextBox x:Name="ballsNumberBox" Text="{Binding BallsNumber}" Margin="0,52,0,692" Width="200" Height="40" TextAlignment="Center" FontSize="24px" BorderBrush="Black" BorderThickness="4"/>
         <Button x:Name= "addButton" Margin="536,52,122,692" Width="100" Height="40" Content="ADD" FontSize="24px" FontWeight="Bold" Background="#9ee272" Command="{Binding AddCommand}"></Button>

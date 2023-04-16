@@ -92,8 +92,6 @@ namespace Logic
             if (ball.Y - BallRadius < 0) { ball.Y = BallRadius; }
             else if (ball.Y + BallRadius > BoardHeight) { ball.Y = BoardHeight - BallRadius; }
             OnBallMoved(Balls.FindIndex(a => a == ball));
-
-            Console.WriteLine("keep " + ball.X + " " +ball.Y);
         }
     }
 }
