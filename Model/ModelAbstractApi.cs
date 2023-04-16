@@ -32,7 +32,7 @@ namespace Model
         public override int BallRadius { get; }
         public override int BoardWidth { get; }
         public override int BoardHeight { get; }
-        public Canvas Canvas { get; set; }
+        private Canvas Canvas { get; set; }
 
         private Random random = new Random();
 
