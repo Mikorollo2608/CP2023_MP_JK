@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>TestLogic</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
-
 </Project>

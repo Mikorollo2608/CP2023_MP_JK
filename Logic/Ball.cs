@@ -3,38 +3,40 @@ using System.Runtime.CompilerServices;
 
 namespace Logic
 {
-    public class Ball : IDisposable, INotifyPropertyChanged
+    internal delegate void BallEvent(Ball ball);
+
+    internal class Ball : IDisposable
     {
         //PropertyChanged is fired when ball moves
-        public event PropertyChangedEventHandler PropertyChanged;
         private Random random = new Random();
         public int X { get; set; }
         public int Y { get; set; }
 
         private Timer BallTimer;
+        private event BallEvent BallMoved;
 
-        public Ball(int x, int y, PropertyChangedEventHandler function)
+        public Ball(int x, int y, BallEvent function)
         {
             X = x;
             Y = y;
             BallTimer = new Timer(Move, null, 0, 150);
-            PropertyChanged += function;
+            BallMoved += function;
         }
 
         private void Move(object? state)
         {
             X += random.Next(21) - 10;
             Y += random.Next(21) - 10;
-            OnPropertyChanged();
+            OnBallMoved();
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        protected void OnBallMoved()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            BallMoved?.Invoke(this);
         }
 
-        public PropertyChangedEventHandler GetPublisher() { return PropertyChanged; }
+        public BallEvent GetPublisher() { return BallMoved; }
 
-        public void Dispose() { BallTimer.Dispose(); PropertyChanged = null; }
+        public void Dispose() { BallTimer.Dispose(); }
     }
 }

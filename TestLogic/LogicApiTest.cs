@@ -1,5 +1,4 @@
 using Logic;
-using System.ComponentModel;
 
 namespace TestLogic
 {
@@ -7,7 +6,7 @@ namespace TestLogic
     public class LogicApiTest
     {
 
-        public void Foo(object obj, PropertyChangedEventArgs e) { Console.WriteLine("Do nothing"); }
+        internal void Foo(Ball ball) { Console.WriteLine("Do nothing"); }
 
         [TestMethod]
         public void TestSimulationBoardKeepBallInbound()

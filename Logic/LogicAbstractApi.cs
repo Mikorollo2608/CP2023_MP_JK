@@ -55,9 +55,8 @@ namespace Logic
             return Balls.Count;
         }
 
-        private void KeepBallInbound(object obj, PropertyChangedEventArgs e)
+        private void KeepBallInbound(Ball ball)
         {
-            Ball ball = (Ball)obj;
             if (ball.X - BallRadius < 0) { ball.X = 0 + BallRadius; }
             else if (ball.X + BallRadius > BoardWidth) { ball.X = BoardWidth - BallRadius; }
             if (ball.Y - BallRadius < 0) { ball.Y = 0 + BallRadius; }
