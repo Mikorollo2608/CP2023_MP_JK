@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System.Threading;
+using System.Timers;
 
 namespace Logic
 {
@@ -11,18 +11,31 @@ namespace Logic
         public int X { get; set; }
         public int Y { get; set; }
 
-        private Timer BallTimer;
+        private System.Timers.Timer BallTimer;
         private event BallEvent BallMoved;
 
-        public Ball(int x, int y, BallEvent function)
+        public Ball(int x, int y, bool IsSimulationRunning, BallEvent function)
         {
             X = x;
             Y = y;
-            BallTimer = new Timer(Move, null, 0, 100);
+            BallTimer = new System.Timers.Timer(100);
+            BallTimer.Elapsed += Move;
+            BallTimer.AutoReset = true;
+            BallTimer.Enabled = IsSimulationRunning;
             BallMoved += function;
         }
 
-        private void Move(object? state)
+        public void Start()
+        {
+            BallTimer.Enabled = true;
+        }
+
+        public void Stop()
+        {
+            BallTimer.Enabled = false;
+        }
+
+        private void Move(object? source, ElapsedEventArgs e)
         {
             X += random.Next(21) - 10;
             Y += random.Next(21) - 10;

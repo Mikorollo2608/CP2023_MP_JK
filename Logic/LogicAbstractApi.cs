@@ -14,6 +14,10 @@ namespace Logic
         public abstract int GetY(int BallNumber);
         public abstract int GetBallCount();
 
+        public abstract void Start();
+
+        public abstract void Stop();
+
         public static LogicAbstractApi CreateLogicApi(int BallRadius, int BoardWidth, int BoardHeight, BallPositionEvent Subscriber)
         {
             return new SimulationBoard(BallRadius, BoardWidth, BoardHeight, Subscriber);
@@ -22,7 +26,7 @@ namespace Logic
 
     internal class SimulationBoard : LogicAbstractApi
     {
-
+        private bool IsSimulationRunning = false;
         private List<Ball> Balls = new List<Ball>();
         public override int BallRadius { get; }
         public override int BoardWidth { get; }
@@ -42,7 +46,7 @@ namespace Logic
 
         public override void CreateBall(int x, int y)
         {
-            Balls.Add(new Ball(x, y, KeepBallInbound));
+            Balls.Add(new Ball(x, y,IsSimulationRunning, KeepBallInbound));
         }
 
         public override int GetX(int BallNumber)
@@ -56,6 +60,16 @@ namespace Logic
         public override int GetBallCount()
         {
             return Balls.Count;
+        }
+
+        public override void Start()
+        {
+            IsSimulationRunning= true;
+        }
+
+        public override void Stop()
+        {
+            IsSimulationRunning = false;
         }
 
         protected void OnBallMoved(int index)

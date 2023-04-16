@@ -24,7 +24,7 @@ namespace TestLogic
         [TestMethod]
         public void TestBallMove()
         {
-            Ball ball = new Ball(0, 0, BallChangedBall);
+            Ball ball = new Ball(0, 0, true, BallChangedBall);
             int x = ball.X;
             int y = ball.Y;
             Thread.Sleep(150);
