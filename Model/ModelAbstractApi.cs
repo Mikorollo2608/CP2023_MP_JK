@@ -1,9 +1,7 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 using Logic;
 
 namespace Model
@@ -91,8 +89,8 @@ namespace Model
 
         public override void Move(int index)
         {
-            var left = correctPosition(Simulation.GetX(index), StartOffsetX, EndOffsetX);
-            var right = correctPosition(Simulation.GetY(index), StartOffsetY, EndOffsetY);
+            int left = correctPosition(Simulation.GetX(index), StartOffsetX, EndOffsetX);
+            int right = correctPosition(Simulation.GetY(index), StartOffsetY, EndOffsetY);
             Application.Current.Dispatcher.Invoke(new Action (() => {
                 Canvas.SetLeft(ellipseCollection[index], left);
                 Canvas.SetTop(ellipseCollection[index], right);

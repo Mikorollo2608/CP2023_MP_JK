@@ -7,7 +7,7 @@ namespace ViewModel
     public class ViewModelMainWindow : ViewModelBase
     {
         private ModelAbstractApi ModelApi;
-        private int _BallsNumber = 5;
+        private int _BallsNumber = 0;
 
         public ICommand AddCommand { get; set; }
         public ICommand StopCommand { get; set; }
@@ -15,8 +15,6 @@ namespace ViewModel
         public ViewModelMainWindow()
         {
             ModelApi = ModelAbstractApi.CreateApi(25, 500, 500);
-            // ??
-            // IDisposable observer = ModelApi.Subscribe<>
             AddCommand = new RelayCommand(Start);
             StopCommand = new RelayCommand(Stop);
         }
@@ -33,10 +31,6 @@ namespace ViewModel
             }
         }
 
-        // ???
-        // public ObservableCollection<>
-
-
         public Canvas Canvas
         {
             get
@@ -44,7 +38,6 @@ namespace ViewModel
                 return ModelApi.Canvas;
             }
         }
-
 
         private void Start()
         {
