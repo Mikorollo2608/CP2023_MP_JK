@@ -72,10 +72,12 @@ namespace Model
         }
         public override void Start(int BallsNumber) 
         {
+            Simulation.Start();
             CreateEllipses(BallsNumber);
         }
         public override void Stop() 
         {
+            Simulation.Stop();
         }
         public override void MoveAll()
         {
