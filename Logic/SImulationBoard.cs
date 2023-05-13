@@ -84,7 +84,7 @@ namespace Logic
         private void BallsColisions(BallApi ball)
         {
             ball.Stop();
-            lockSlim.EnterReadLock();
+            lockSlim.EnterWriteLock();
             try
             {
                 foreach (BallApi b in Balls)
@@ -92,7 +92,7 @@ namespace Logic
                     b.Stop();
                     if (b != ball)
                     {
-                        if (CalculateBallsDistanceNextFrame(ball, b) < 2 * BallRadius)
+                        if (CalculateBallsDistance(ball, b) < 2 * BallRadius)
                         {
                             if (!cache.Contains(ball, b))
                             {
@@ -115,7 +115,7 @@ namespace Logic
             }
             finally
             {
-                lockSlim.ExitReadLock();
+                lockSlim.ExitWriteLock();
             }
         }
 
