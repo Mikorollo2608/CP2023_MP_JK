@@ -1,4 +1,6 @@
 ﻿using Data;
+using Logic;
+using System;
 using System.Numerics;
 
 namespace Logic
@@ -14,6 +16,8 @@ namespace Logic
         private BallEvent TriggerCollisions;
         private MovementBox Box;
         private ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim();
+        private CollisionCache cache;
+
 
         public SimulationBoard(int Radius, int Width, int Height, BallPositionEvent Subscriber)
         {
@@ -21,6 +25,7 @@ namespace Logic
             BallRadius = Radius;
             BallMoved += Subscriber;
             TriggerCollisions += BallsColisions;
+            cache = new CollisionCache(CheckForCollision);
         }
 
         public override void CreateBall(int x, int y)
@@ -78,52 +83,6 @@ namespace Logic
 
         private void BallsColisions(BallApi ball)
         {
-            //int ballIndex;
-            //int ballCount;
-            //int index;
-            //lock (Balls)
-            //{
-            //    Balls.Sort(CompareBalls);
-            //    ballIndex = Balls.IndexOf(ball);
-            //    ballCount= Balls.Count;
-            //    index = ballIndex-1;
-            //    ball.Stop();
-            //    while(index >= 0 && Math.Abs(Balls[index].GetX() - ball.GetX())<2*BallRadius) {
-            //        Balls[index].Stop();
-            //        if (CalculateBallsDistance(ball, Balls[index]) < 2 * BallRadius)
-            //        {
-            //            //TODO change velocity
-            //            Velocities vel = CalculateNewVelocities(ball, Balls[index]);
-            //            ball.XVelocity = vel.Ball1X;
-            //            ball.YVelocity = vel.Ball1Y;
-            //            Balls[index].XVelocity = vel.Ball2X;
-            //            Balls[index].YVelocity = vel.Ball2Y;
-            //            ball.Start();
-            //            Balls[index].Start();
-            //            return;
-            //        }
-            //        Balls[index].Start();
-            //        index--;
-            //    }
-            //    index = ballIndex + 1;
-            //    while (index < ballCount && Math.Abs(Balls[index].GetX() - ball.GetX()) < 2 * BallRadius)
-            //    {
-            //        if (CalculateBallsDistance(ball, Balls[index]) < 2 * BallRadius)
-            //        {
-            //            //TODO change velocity
-            //            Velocities vel = CalculateNewVelocities(ball, Balls[index]);
-            //            ball.XVelocity = vel.Ball1X;
-            //            ball.YVelocity = vel.Ball1Y;
-            //            Balls[index].XVelocity = vel.Ball2X;
-            //            Balls[index].YVelocity = vel.Ball2Y;
-            //            ball.Start();
-            //            Balls[index].Start();
-            //            return;
-            //        }
-            //        Balls[index].Start();
-            //        index++;
-            //    }
-            //}
             ball.Stop();
             lockSlim.EnterReadLock();
             try
@@ -133,13 +92,20 @@ namespace Logic
                     b.Stop();
                     if (b != ball)
                     {
-                        if (CalculateBallsDistance(ball, b) < 2 * BallRadius)
+                        if (CalculateBallsDistanceNextFrame(ball, b) < 2 * BallRadius)
                         {
-                            Velocities vel = CalculateNewVelocities(ball, b);
-                            ball.XVelocity = vel.Ball1X;
-                            ball.YVelocity = vel.Ball1Y;
-                            b.XVelocity = vel.Ball2X;
-                            b.YVelocity = vel.Ball2Y;
+                            if (!cache.Contains(ball, b))
+                            {
+                                Velocities vel = CalculateNewVelocities(ball, b);
+                                ball.XVelocity = vel.Ball1X;
+                                ball.YVelocity = vel.Ball1Y;
+                                b.XVelocity = vel.Ball2X;
+                                b.YVelocity = vel.Ball2Y;
+                                cache.Add(ball, b);
+                                //b.Start();
+                                //ball.Start();
+                                //break;
+                            }
                         }
                     }
                     b.Start();
@@ -155,9 +121,16 @@ namespace Logic
 
         private void KeepBallInbound(BallApi ball)
         {
-            if (ball.GetX() - BallRadius < 0 || ball.GetX() + BallRadius > Box.Width) { ball.XVelocity = -ball.XVelocity; }
-            if (ball.GetY() - BallRadius < 0 || ball.GetY() + BallRadius > Box.Height) { ball.YVelocity = -ball.YVelocity; }
+            if (ball.GetX() - BallRadius < 0 && Math.Sign(ball.XVelocity) == -1) ball.XVelocity = -ball.XVelocity;
+            else if (ball.GetX() + BallRadius > Box.Width && Math.Sign(ball.XVelocity) == 1) { ball.XVelocity = -ball.XVelocity; }
+            if (ball.GetY() - BallRadius < 0 && Math.Sign(ball.YVelocity) == -1) { ball.YVelocity = -ball.YVelocity; }
+            else if (ball.GetY() + BallRadius > Box.Height && Math.Sign(ball.YVelocity) == 1) { ball.YVelocity = -ball.YVelocity; }
             OnBallMoved(ball);
+        }
+
+        private bool CheckForCollision(BallApi ball1, BallApi ball2)
+        {
+            return CalculateBallsDistance(ball1, ball2) < 2 * BallRadius;
         }
 
         private static int CompareBalls(BallApi ball1, BallApi ball2)
@@ -175,9 +148,14 @@ namespace Logic
             return Math.Sign(ball1.GetX() - ball2.GetX());
         }
 
-        private static double CalculateBallsDistance(BallApi ball1, BallApi ball2)
+        internal static double CalculateBallsDistance(BallApi ball1, BallApi ball2)
         {
             return Math.Sqrt(Math.Pow(ball1.GetX() - ball2.GetX(), 2) + Math.Pow(ball1.GetY() - ball2.GetY(), 2));
+        }
+
+        internal static double CalculateBallsDistanceNextFrame(BallApi ball1, BallApi ball2)
+        {
+            return Math.Sqrt(Math.Pow((ball1.GetX() + ball1.XVelocity) - (ball2.GetX() + ball2.XVelocity), 2) + Math.Pow((ball1.GetY() + ball1.YVelocity) - (ball2.GetY() + ball2.YVelocity), 2));
         }
 
         private Velocities CalculateNewVelocities(BallApi ball1, BallApi ball2)
@@ -187,6 +165,13 @@ namespace Logic
             Vector2 ball2Vel = new Vector2((float)ball2.XVelocity, (float)ball2.YVelocity);
             Vector2 ball1Pos = new Vector2((float)ball1.GetX(), (float)ball1.GetY());
             Vector2 ball2Pos = new Vector2((float)ball2.GetX(), (float)ball2.GetY());
+
+
+
+            //TODO usunac
+
+
+
             var a = Vector2.Multiply(Vector2.Subtract(ball1Pos, ball2Pos), (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2)));
             var b = Vector2.Subtract(ball1Pos, ball2Pos);
             var c = (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2));
@@ -198,6 +183,125 @@ namespace Logic
             ret.Ball2Y = (double)newBall2Vel.Y;
             return ret;
         }
+
+        private Velocities CalculateNewVelocitiesNextFrame(BallApi ball1, BallApi ball2)
+        {
+            Velocities ret = new Velocities();
+            Vector2 ball1Vel = new Vector2((float)ball1.XVelocity, (float)ball1.YVelocity);
+            Vector2 ball2Vel = new Vector2((float)ball2.XVelocity, (float)ball2.YVelocity);
+            Vector2 ball1Pos = new Vector2((float)(ball1.GetX() + ball1.XVelocity), (float)(ball1.GetY() + ball1.YVelocity));
+            Vector2 ball2Pos = new Vector2((float)(ball2.GetX() + ball2.XVelocity), (float)(ball2.GetY() + ball2.YVelocity));
+
+
+
+            //TODO usunac
+
+
+
+            var a = Vector2.Multiply(Vector2.Subtract(ball1Pos, ball2Pos), (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2)));
+            var b = Vector2.Subtract(ball1Pos, ball2Pos);
+            var c = (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2));
+            Vector2 newBall1Vel = Vector2.Subtract(ball1Vel, Vector2.Multiply(Vector2.Subtract(ball1Pos, ball2Pos), (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2))));
+            Vector2 newBall2Vel = Vector2.Subtract(ball2Vel, Vector2.Multiply(Vector2.Subtract(ball2Pos, ball1Pos), (float)(Vector2.Dot(ball2Vel - ball1Vel, ball2Pos - ball1Pos) / Math.Pow(Vector2.Distance(ball2Pos, ball1Pos), 2))));
+            ret.Ball1X = (double)newBall1Vel.X;
+            ret.Ball1Y = (double)newBall1Vel.Y;
+            ret.Ball2X = (double)newBall2Vel.X;
+            ret.Ball2Y = (double)newBall2Vel.Y;
+            return ret;
+        }
+    }
+}
+
+internal delegate bool CollisionDetection(BallApi ball1, BallApi ball2);
+
+internal class CollisionCache
+{
+    private List<CollisionPair> cache = new List<CollisionPair>();
+    private ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim();
+    private CollisionDetection AreBallsConnected;
+
+    public CollisionCache(CollisionDetection foo)
+    {
+        AreBallsConnected = foo;
+        Task.Run(() => { ClearCache(); });
+    }
+
+    public void Add(BallApi ball1, BallApi ball2)
+    {
+        CollisionPair pair = new CollisionPair(ball1, ball2);
+        try
+        {
+            lockSlim.EnterWriteLock();
+            if (cache.Count >= 5) { cache.RemoveAt(0); }
+            cache.Add(pair);
+            Task.Run(() => { ClearCache(pair); });
+        }
+        finally { lockSlim.ExitWriteLock(); }
+    }
+
+    public bool Contains(BallApi ball1, BallApi ball2)
+    {
+        try
+        {
+            lockSlim.EnterReadLock();
+            foreach (CollisionPair collisionPair in cache)
+            {
+                if (collisionPair.Contains(ball1, ball2)) { return true; }
+            }
+            return false;
+        }
+        finally { lockSlim.ExitReadLock(); }
+    }
+
+    private async void ClearCache()
+    {
+        while (true)
+        {
+            try
+            {
+                lockSlim.EnterWriteLock();
+                if (cache.Count != 0) cache.RemoveAt(0);
+            }
+            finally
+            {
+                lockSlim.ExitWriteLock();
+                await Task.Delay(25);
+            }
+        }
+    }
+
+    private async void ClearCache(CollisionPair pair)
+    {
+        while (AreBallsConnected(pair.ball1, pair.ball2))
+        {
+            await Task.Delay(10);
+        }
+        try
+        {
+            lockSlim.EnterWriteLock();
+            cache.Remove(pair);
+        }
+        finally
+        {
+            lockSlim.ExitWriteLock();
+        }
+    }
+}
+
+internal struct CollisionPair
+{
+    public BallApi ball1 { get; set; }
+    public BallApi ball2 { get; set; }
+
+    public CollisionPair(BallApi ball1, BallApi ball2)
+    {
+        this.ball1 = ball1;
+        this.ball2 = ball2;
+    }
+
+    public bool Contains(BallApi ball1, BallApi ball2)
+    {
+        return (this.ball1 == ball1 && this.ball2 == ball2) || (this.ball1 == ball2 && this.ball2 == ball1);
     }
 }
 

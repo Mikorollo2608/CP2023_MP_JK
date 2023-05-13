@@ -1,4 +1,6 @@
-﻿namespace Data
+﻿using System.Diagnostics;
+
+namespace Data
 {
     internal class Ball : BallApi
     {
@@ -34,7 +36,11 @@
                     x += XVelocity;
                     y += YVelocity;
                     OnBallMoved();
-                    await Task.Delay(30);
+                    await Task.Delay(20);
+                }
+                else
+                {
+                    await Task.Delay(10);
                 }
             }
         }
