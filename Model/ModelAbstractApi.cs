@@ -86,8 +86,8 @@ namespace Model
 
         public override void Move(int index)
         {
-            int left = correctPosition(Simulation.GetX(index));
-            int right = correctPosition(Simulation.GetY(index));
+            double left = correctPosition(Simulation.GetX(index));
+            double right = correctPosition(Simulation.GetY(index));
             Application.Current.Dispatcher.Invoke(new Action (() => {
                 Canvas.SetLeft(ellipseCollection[index], left);
                 Canvas.SetTop(ellipseCollection[index], right);
@@ -95,9 +95,9 @@ namespace Model
         }
 
 
-        private int correctPosition(int Value)
+        private double correctPosition(double Value)
         {
-            int newValue = Value - BallRadius;
+            double newValue = Value - BallRadius;
 
             return newValue;
         }

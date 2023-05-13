@@ -6,12 +6,11 @@ namespace Logic
     public abstract class LogicAbstractApi
     {
         public abstract int BallRadius { get; }
-        public abstract int BoardWidth { get; }
-        public abstract int BoardHeight { get; }
+
         public abstract event BallPositionEvent BallMoved;
         public abstract void CreateBall(int x, int y);
-        public abstract int GetX(int BallNumber);
-        public abstract int GetY(int BallNumber);
+        public abstract double GetX(int BallNumber);
+        public abstract double GetY(int BallNumber);
         public abstract int GetBallCount();
 
         public abstract void Start();
@@ -26,36 +25,37 @@ namespace Logic
 
     internal class SimulationBoard : LogicAbstractApi
     {
+        private Random rand = new Random();
         private bool IsSimulationRunning = false;
-        private List<Ball> Balls = new List<Ball>();
+        private List<BallApi> Balls = new List<BallApi>();
         public override int BallRadius { get; }
-        public override int BoardWidth { get; }
-        public override int BoardHeight { get; }
 
         public override event BallPositionEvent BallMoved;
 
-        private DataAbstractApi DataApi = DataAbstractApi.CreateApi();
+        private MovementBox Box;
 
         public SimulationBoard(int Radius, int Width, int Height, BallPositionEvent Subscriber)
         {
+            Box = MovementBox.CreateBox(Width, Height);
             BallRadius = Radius;
-            BoardWidth = Width;
-            BoardHeight = Height;
             BallMoved += Subscriber;
         }
 
         public override void CreateBall(int x, int y)
         {
-            Balls.Add(new Ball(x, y,IsSimulationRunning, KeepBallInbound));
+
+            double XVelocity = (rand.NextDouble() * 10) - 5;
+            double YVelocity = (rand.NextDouble() * 10) - 5;
+            Balls.Add(BallApi.CreateNewBall(x, y, XVelocity, YVelocity, KeepBallInbound, IsSimulationRunning));
         }
 
-        public override int GetX(int BallNumber)
+        public override double GetX(int BallNumber)
         {
-            return Balls[BallNumber].X;
+            return Balls[BallNumber].GetX();
         }
-        public override int GetY(int BallNumber)
+        public override double GetY(int BallNumber)
         {
-            return Balls[BallNumber].Y;
+            return Balls[BallNumber].GetY();
         }
         public override int GetBallCount()
         {
@@ -65,7 +65,7 @@ namespace Logic
         public override void Start()
         {
             IsSimulationRunning = true;
-            foreach (Ball ball in Balls)
+            foreach (BallApi ball in Balls)
             {
                 ball.Start();
             }
@@ -74,7 +74,7 @@ namespace Logic
         public override void Stop()
         {
             IsSimulationRunning = false;
-            foreach (Ball ball in Balls)
+            foreach (BallApi ball in Balls)
             {
                 ball.Stop();
             }
@@ -85,12 +85,10 @@ namespace Logic
             BallMoved?.Invoke(index);
         }
 
-        private void KeepBallInbound(Ball ball)
+        private void KeepBallInbound(BallApi ball)
         {
-            if (ball.X - BallRadius < 0) { ball.X = BallRadius; }
-            else if (ball.X + BallRadius > BoardWidth) { ball.X = BoardWidth - BallRadius; }
-            if (ball.Y - BallRadius < 0) { ball.Y = BallRadius; }
-            else if (ball.Y + BallRadius > BoardHeight) { ball.Y = BoardHeight - BallRadius; }
+            if (ball.GetX() - BallRadius < 0 || ball.GetX() + BallRadius > Box.Width) { ball.XVelocity = -ball.XVelocity; }
+            if (ball.GetY() - BallRadius < 0 || ball.GetY() + BallRadius > Box.Height) { ball.YVelocity = -ball.YVelocity; }
             OnBallMoved(Balls.FindIndex(a => a == ball));
         }
     }
