@@ -43,9 +43,8 @@ namespace Logic
 
         public override void CreateBall(int x, int y)
         {
-
-            double XVelocity = (rand.NextDouble() * 10) - 5;
-            double YVelocity = (rand.NextDouble() * 10) - 5;
+            double XVelocity = (rand.NextDouble() * 14) - 7;
+            double YVelocity = (rand.NextDouble() * 14) - 7;
             Balls.Add(BallApi.CreateNewBall(x, y, XVelocity, YVelocity, KeepBallInbound, IsSimulationRunning));
         }
 

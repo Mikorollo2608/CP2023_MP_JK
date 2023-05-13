@@ -63,7 +63,7 @@ namespace Model
         {
             for (int i = 0; i < BallsNumber; i++)
             {
-                Simulation.CreateBall(random.Next(0, BoardWidth), random.Next(0, BoardHeight));
+                Simulation.CreateBall(random.Next(0 + BallRadius, BoardWidth - BallRadius), random.Next(0 + BallRadius, BoardHeight - BallRadius));
                 Ellipse ellipse = new Ellipse();
                 ellipse.Width = BallRadius;
                 ellipse.Height = BallRadius;
