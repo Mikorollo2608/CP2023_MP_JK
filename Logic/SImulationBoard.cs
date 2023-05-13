@@ -1,6 +1,7 @@
 ﻿using Data;
 using Logic;
 using System;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace Logic
@@ -92,19 +93,19 @@ namespace Logic
                     b.Stop();
                     if (b != ball)
                     {
-                        if (CalculateBallsDistance(ball, b) < 2 * BallRadius)
+                        if (CalculateBallsDistanceNextFrame(ball, b) < 2 * BallRadius)
                         {
                             if (!cache.Contains(ball, b))
                             {
-                                Velocities vel = CalculateNewVelocities(ball, b);
+                                cache.Add(ball, b);
+                                Velocities vel = CalculateNewVelocitiesNextFrame(ball, b);
                                 ball.XVelocity = vel.Ball1X;
                                 ball.YVelocity = vel.Ball1Y;
                                 b.XVelocity = vel.Ball2X;
                                 b.YVelocity = vel.Ball2Y;
-                                cache.Add(ball, b);
-                                //b.Start();
-                                //ball.Start();
-                                //break;
+                                b.Start();
+                                ball.Start();
+                                break;
                             }
                         }
                     }
@@ -130,7 +131,12 @@ namespace Logic
 
         private bool CheckForCollision(BallApi ball1, BallApi ball2)
         {
-            return CalculateBallsDistance(ball1, ball2) < 2 * BallRadius;
+            ball1.Stop();
+            ball2.Stop();
+            bool ret = CalculateBallsDistance(ball1, ball2) < 2 * BallRadius;
+            ball1.Start();
+            ball1.Start();
+            return ret;
         }
 
         private static int CompareBalls(BallApi ball1, BallApi ball2)
@@ -155,7 +161,7 @@ namespace Logic
 
         internal static double CalculateBallsDistanceNextFrame(BallApi ball1, BallApi ball2)
         {
-            return Math.Sqrt(Math.Pow((ball1.GetX() + ball1.XVelocity) - (ball2.GetX() + ball2.XVelocity), 2) + Math.Pow((ball1.GetY() + ball1.YVelocity) - (ball2.GetY() + ball2.YVelocity), 2));
+            return Math.Sqrt(Math.Pow(ball1.GetX() + ball1.XVelocity - ball2.GetX(), 2) + Math.Pow(ball1.GetY() + ball1.YVelocity - ball2.GetY(), 2));
         }
 
         private Velocities CalculateNewVelocities(BallApi ball1, BallApi ball2)
@@ -190,7 +196,7 @@ namespace Logic
             Vector2 ball1Vel = new Vector2((float)ball1.XVelocity, (float)ball1.YVelocity);
             Vector2 ball2Vel = new Vector2((float)ball2.XVelocity, (float)ball2.YVelocity);
             Vector2 ball1Pos = new Vector2((float)(ball1.GetX() + ball1.XVelocity), (float)(ball1.GetY() + ball1.YVelocity));
-            Vector2 ball2Pos = new Vector2((float)(ball2.GetX() + ball2.XVelocity), (float)(ball2.GetY() + ball2.YVelocity));
+            Vector2 ball2Pos = new Vector2((float)ball2.GetX(), (float)ball2.GetY());
 
 
 
@@ -223,7 +229,6 @@ internal class CollisionCache
     public CollisionCache(CollisionDetection foo)
     {
         AreBallsConnected = foo;
-        Task.Run(() => { ClearCache(); });
     }
 
     public void Add(BallApi ball1, BallApi ball2)
@@ -232,7 +237,6 @@ internal class CollisionCache
         try
         {
             lockSlim.EnterWriteLock();
-            if (cache.Count >= 5) { cache.RemoveAt(0); }
             cache.Add(pair);
             Task.Run(() => { ClearCache(pair); });
         }
@@ -274,7 +278,7 @@ internal class CollisionCache
     {
         while (AreBallsConnected(pair.ball1, pair.ball2))
         {
-            await Task.Delay(10);
+            await Task.Delay(20);
         }
         try
         {
@@ -301,7 +305,7 @@ internal struct CollisionPair
 
     public bool Contains(BallApi ball1, BallApi ball2)
     {
-        return (this.ball1 == ball1 && this.ball2 == ball2) || (this.ball1 == ball2 && this.ball2 == ball1);
+        return (Object.ReferenceEquals(this.ball1, ball2) && Object.ReferenceEquals(this.ball2, ball1)) || (Object.ReferenceEquals(this.ball1, ball1) && Object.ReferenceEquals(this.ball2, ball2));
     }
 }
 
