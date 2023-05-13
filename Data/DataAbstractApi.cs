@@ -18,17 +18,17 @@
 
     }
 
-    public abstract class MovementBox
+    public abstract class MovementBoxApi
     {
         public abstract int Width { get; }
         public abstract int Height { get; }
-        public static MovementBox CreateBox(int width, int height)
+        public static MovementBoxApi CreateBox(int width, int height)
         {
             return new Plane(width, height);
         }
     }
 
-    internal class Plane : MovementBox
+    internal class Plane : MovementBoxApi
     {
         public override int Width { get; }
         public override int Height { get; }

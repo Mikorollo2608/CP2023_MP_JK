@@ -12,18 +12,38 @@ namespace Logic
         private bool IsSimulationRunning = false;
         private List<BallApi> Balls = new List<BallApi>();
         private BallEvent TriggerCollisions;
-        private MovementBox Box;
+        private MovementBoxApi Box;
         private ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim();
         private CollisionCache cache;
 
-
-        public SimulationBoard(int Radius, int Width, int Height, BallPositionEvent Subscriber)
+        public SimulationBoard(MovementBoxApi Box, int Radius, BallPositionEvent Subscriber)
         {
-            Box = MovementBox.CreateBox(Width, Height);
+            this.Box = Box;
             BallRadius = Radius;
             BallMoved += Subscriber;
             TriggerCollisions += BallsColisions;
             cache = new CollisionCache(CheckForCollision);
+        }
+
+        public SimulationBoard(int Radius, int Width, int Height, BallPositionEvent Subscriber)
+        {
+            Box = MovementBoxApi.CreateBox(Width, Height);
+            BallRadius = Radius;
+            BallMoved += Subscriber;
+            TriggerCollisions += BallsColisions;
+            cache = new CollisionCache(CheckForCollision);
+        }
+        public override void CreateBall(BallApi ball)
+        {
+            try
+            {
+                lockSlim.EnterWriteLock();
+                Balls.Add(ball);
+            }
+            finally
+            {
+                lockSlim.ExitWriteLock();
+            }
         }
 
         public override void CreateBall(int x, int y)

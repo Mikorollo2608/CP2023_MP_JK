@@ -6,8 +6,9 @@ namespace Logic
     public abstract class LogicAbstractApi
     {
         public abstract int BallRadius { get; }
-
         public abstract event BallPositionEvent BallMoved;
+        //DI
+        public abstract void CreateBall(BallApi ball);
         public abstract void CreateBall(int x, int y);
         public abstract double GetX(int BallNumber);
         public abstract double GetY(int BallNumber);
@@ -16,6 +17,12 @@ namespace Logic
         public abstract void Start();
 
         public abstract void Stop();
+
+        //DI
+        public static LogicAbstractApi CreateLogicApi(MovementBoxApi Box, int Radius, BallPositionEvent Subscriber)
+        {
+            return new SimulationBoard(Box, Radius, Subscriber);
+        }
 
         public static LogicAbstractApi CreateLogicApi(int BallRadius, int BoardWidth, int BoardHeight, BallPositionEvent Subscriber)
         {
