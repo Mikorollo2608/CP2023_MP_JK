@@ -54,7 +54,7 @@ namespace Logic
             try
             {
                 lockSlim.EnterWriteLock();
-                Balls.Add(BallApi.CreateNewBall(x, y, XVelocity, YVelocity, KeepBallInbound, IsSimulationRunning));
+                Balls.Add(BallApi.CreateNewBall(BallRadius, x, y, XVelocity, YVelocity, KeepBallInbound, IsSimulationRunning));
             }
             finally
             {
@@ -110,7 +110,7 @@ namespace Logic
                     b.Stop();
                     if (b != ball)
                     {
-                        if (CalculateBallsDistance(ball, b) < 2 * BallRadius)
+                        if (CalculateBallsDistance(ball, b) < ball.Radius + b.Radius)
                         {
                             if (!cache.Contains(ball, b))
                             {
@@ -139,10 +139,10 @@ namespace Logic
 
         private void KeepBallInbound(BallApi ball)
         {
-            if (ball.GetX() - BallRadius < 0 && Math.Sign(ball.XVelocity) == -1) ball.XVelocity = -ball.XVelocity;
-            else if (ball.GetX() + BallRadius > Box.Width && Math.Sign(ball.XVelocity) == 1) { ball.XVelocity = -ball.XVelocity; }
-            if (ball.GetY() - BallRadius < 0 && Math.Sign(ball.YVelocity) == -1) { ball.YVelocity = -ball.YVelocity; }
-            else if (ball.GetY() + BallRadius > Box.Height && Math.Sign(ball.YVelocity) == 1) { ball.YVelocity = -ball.YVelocity; }
+            if (ball.GetX() - ball.Radius < 0 && Math.Sign(ball.XVelocity) == -1) ball.XVelocity = -ball.XVelocity;
+            else if (ball.GetX() + ball.Radius > Box.Width && Math.Sign(ball.XVelocity) == 1) { ball.XVelocity = -ball.XVelocity; }
+            if (ball.GetY() - ball.Radius < 0 && Math.Sign(ball.YVelocity) == -1) { ball.YVelocity = -ball.YVelocity; }
+            else if (ball.GetY() + ball.Radius > Box.Height && Math.Sign(ball.YVelocity) == 1) { ball.YVelocity = -ball.YVelocity; }
             OnBallMoved(ball);
         }
 
@@ -150,7 +150,7 @@ namespace Logic
         {
             ball1.Stop();
             ball2.Stop();
-            bool ret = CalculateBallsDistance(ball1, ball2) < 2 * BallRadius;
+            bool ret = CalculateBallsDistance(ball1, ball2) < ball1.Radius + ball2.Radius;
             ball1.Start();
             ball1.Start();
             return ret;

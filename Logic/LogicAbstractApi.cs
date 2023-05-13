@@ -6,6 +6,7 @@ namespace Logic
     public abstract class LogicAbstractApi
     {
         public abstract int BallRadius { get; }
+
         public abstract event BallPositionEvent BallMoved;
         //DI
         public abstract void CreateBall(BallApi ball);

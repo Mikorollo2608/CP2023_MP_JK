@@ -4,6 +4,7 @@
 
     public abstract class BallApi
     {
+        public abstract int Radius { get; }
         public abstract double XVelocity { get; set; }
         public abstract double YVelocity { get; set; }
         public abstract double GetX();
@@ -11,9 +12,9 @@
         public abstract void Start();
         public abstract void Stop();
 
-        public static BallApi CreateNewBall(double x, double y, double XVelocity, double YVelocity, BallEvent subscriber, bool IsSimulationRunning)
+        public static BallApi CreateNewBall(int BallRadius, double x, double y, double XVelocity, double YVelocity, BallEvent subscriber, bool IsSimulationRunning)
         {
-            return new Ball(x, y, XVelocity, YVelocity, subscriber, IsSimulationRunning);
+            return new Ball(BallRadius, x, y, XVelocity, YVelocity, subscriber, IsSimulationRunning);
         }
 
     }
