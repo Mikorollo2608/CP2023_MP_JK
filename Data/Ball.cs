@@ -1,6 +1,4 @@
-﻿using System.Timers;
-
-namespace Data
+﻿namespace Data
 {
     internal class Ball : BallApi
     {
@@ -16,13 +14,13 @@ namespace Data
         public override double GetY() { return y; }
 
 
-        public Ball(double x, double y, double XVelovity, double YVelovity, BallEvent subscriber, bool IsSimulationRunning)
+        public Ball(double x, double y, double XVelocity, double YVelocity, BallEvent subscriber, bool IsSimulationRunning)
         {
             this.x = x;
             this.y = y;
-            this.XVelocity = XVelovity;
-            this.YVelocity = YVelovity;
-            this.BallPublisher = subscriber;
+            this.XVelocity = XVelocity;
+            this.YVelocity = YVelocity;
+            BallPublisher = subscriber;
             this.IsSimulationRunning = IsSimulationRunning;
             Task.Run(() => { Move(); });
         }

@@ -14,7 +14,7 @@ namespace ViewModel
 
         public ViewModelMainWindow()
         {
-            ModelApi = ModelAbstractApi.CreateApi(25, 500, 500);
+            ModelApi = ModelAbstractApi.CreateApi(12, 500, 500);
             AddCommand = new RelayCommand(Start);
             StopCommand = new RelayCommand(Stop);
         }

@@ -11,7 +11,7 @@ namespace Model
         public abstract int BallRadius { get; }
         public abstract int BoardWidth { get; }
         public abstract int BoardHeight { get; }
-        public abstract Border Border{ get; set; }
+        public abstract Border Border { get; set; }
         public abstract List<Ellipse> ellipseCollection { get; }
         public abstract void CreateEllipses(int BallsNumber);
         public abstract void Start(int BallsNumber);
@@ -39,12 +39,12 @@ namespace Model
         public override Border Border { get; set; }
         public override List<Ellipse> ellipseCollection { get; }
 
-        public PresentationModel(int BallRadius, int BoardWidth, int BoardHeight) 
+        public PresentationModel(int BallRadius, int BoardWidth, int BoardHeight)
         {
             this.BallRadius = BallRadius;
             this.BoardWidth = BoardWidth;
             this.BoardHeight = BoardHeight;
-            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth+BallRadius, this.BoardHeight + BallRadius, Move);
+            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth, this.BoardHeight, Move);
             Canvas = new Canvas();
             Border = new Border();
             Canvas.Width = this.BoardWidth;
@@ -59,14 +59,14 @@ namespace Model
             ellipseCollection = new List<Ellipse>();
         }
 
-        public override void CreateEllipses(int BallsNumber) 
+        public override void CreateEllipses(int BallsNumber)
         {
             for (int i = 0; i < BallsNumber; i++)
             {
                 Simulation.CreateBall(random.Next(0 + BallRadius, BoardWidth - BallRadius), random.Next(0 + BallRadius, BoardHeight - BallRadius));
                 Ellipse ellipse = new Ellipse();
-                ellipse.Width = BallRadius;
-                ellipse.Height = BallRadius;
+                ellipse.Width = BallRadius * 2;
+                ellipse.Height = BallRadius * 2;
                 ellipse.Fill = Brushes.Red;
                 Canvas.SetLeft(ellipse, correctPosition(Simulation.GetX(i)));
                 Canvas.SetTop(ellipse, correctPosition(Simulation.GetY(i)));
@@ -74,12 +74,12 @@ namespace Model
                 Canvas.Children.Add(ellipse);
             }
         }
-        public override void Start(int BallsNumber) 
+        public override void Start(int BallsNumber)
         {
             Simulation.Start();
             CreateEllipses(BallsNumber);
         }
-        public override void Stop() 
+        public override void Stop()
         {
             Simulation.Stop();
         }
@@ -88,7 +88,7 @@ namespace Model
         {
             double left = correctPosition(Simulation.GetX(index));
             double right = correctPosition(Simulation.GetY(index));
-            Application.Current.Dispatcher.Invoke(new Action (() => {
+            Application.Current.Dispatcher.Invoke(new Action(() => {
                 Canvas.SetLeft(ellipseCollection[index], left);
                 Canvas.SetTop(ellipseCollection[index], right);
             }));
