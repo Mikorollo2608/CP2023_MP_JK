@@ -2,10 +2,10 @@
 
 namespace Data
 {
-    internal class Ball : BallApi, IDisposable
+    internal class Ball : BallApi
     {
         private BallEvent? BallPublisher;
-        private System.Timers.Timer? BallTimer;
+        private bool IsSimulationRunning;
 
         private double x;
         private double y;
@@ -23,17 +23,22 @@ namespace Data
             this.XVelocity = XVelovity;
             this.YVelocity = YVelovity;
             this.BallPublisher = subscriber;
-            BallTimer = new System.Timers.Timer(30);
-            BallTimer.Elapsed += Move;
-            BallTimer.AutoReset = true;
-            BallTimer.Enabled = IsSimulationRunning;
+            this.IsSimulationRunning = IsSimulationRunning;
+            Task.Run(() => { Move(); });
         }
 
-        private void Move(object? source, ElapsedEventArgs e)
+        private async void Move()
         {
-            x += XVelocity;
-            y += YVelocity;
-            OnBallMoved();
+            while (true)
+            {
+                if (IsSimulationRunning)
+                {
+                    x += XVelocity;
+                    y += YVelocity;
+                    OnBallMoved();
+                    await Task.Delay(30);
+                }
+            }
         }
 
         protected void OnBallMoved()
@@ -43,14 +48,12 @@ namespace Data
 
         public override void Start()
         {
-            BallTimer.Enabled = true;
+            IsSimulationRunning = true;
         }
 
         public override void Stop()
         {
-            BallTimer.Enabled = false;
+            IsSimulationRunning = false;
         }
-
-        public void Dispose() { BallTimer.Dispose(); }
     }
 }
