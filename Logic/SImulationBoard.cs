@@ -1,7 +1,4 @@
 ﻿using Data;
-using Logic;
-using System;
-using System.Diagnostics;
 using System.Numerics;
 
 namespace Logic
@@ -93,12 +90,12 @@ namespace Logic
                     b.Stop();
                     if (b != ball)
                     {
-                        if (CalculateBallsDistanceNextFrame(ball, b) < 2 * BallRadius)
+                        if (CalculateBallsDistance(ball, b) < 2 * BallRadius)
                         {
                             if (!cache.Contains(ball, b))
                             {
                                 cache.Add(ball, b);
-                                Velocities vel = CalculateNewVelocitiesNextFrame(ball, b);
+                                Velocities vel = CalculateNewVelocities(ball, b);
                                 ball.XVelocity = vel.Ball1X;
                                 ball.YVelocity = vel.Ball1Y;
                                 b.XVelocity = vel.Ball2X;
@@ -139,29 +136,9 @@ namespace Logic
             return ret;
         }
 
-        private static int CompareBalls(BallApi ball1, BallApi ball2)
-        {
-            ball1.Stop();
-            ball2.Stop();
-            if (ball1.GetX() - ball2.GetX() == 0)
-            {
-                ball1.Start();
-                ball2.Start();
-                return Math.Sign(ball1.GetY() - ball2.GetY());
-            }
-            ball1.Start();
-            ball2.Start();
-            return Math.Sign(ball1.GetX() - ball2.GetX());
-        }
-
         internal static double CalculateBallsDistance(BallApi ball1, BallApi ball2)
         {
             return Math.Sqrt(Math.Pow(ball1.GetX() - ball2.GetX(), 2) + Math.Pow(ball1.GetY() - ball2.GetY(), 2));
-        }
-
-        internal static double CalculateBallsDistanceNextFrame(BallApi ball1, BallApi ball2)
-        {
-            return Math.Sqrt(Math.Pow(ball1.GetX() + ball1.XVelocity - ball2.GetX(), 2) + Math.Pow(ball1.GetY() + ball1.YVelocity - ball2.GetY(), 2));
         }
 
         private Velocities CalculateNewVelocities(BallApi ball1, BallApi ball2)
@@ -171,16 +148,6 @@ namespace Logic
             Vector2 ball2Vel = new Vector2((float)ball2.XVelocity, (float)ball2.YVelocity);
             Vector2 ball1Pos = new Vector2((float)ball1.GetX(), (float)ball1.GetY());
             Vector2 ball2Pos = new Vector2((float)ball2.GetX(), (float)ball2.GetY());
-
-
-
-            //TODO usunac
-
-
-
-            var a = Vector2.Multiply(Vector2.Subtract(ball1Pos, ball2Pos), (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2)));
-            var b = Vector2.Subtract(ball1Pos, ball2Pos);
-            var c = (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2));
             Vector2 newBall1Vel = Vector2.Subtract(ball1Vel, Vector2.Multiply(Vector2.Subtract(ball1Pos, ball2Pos), (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2))));
             Vector2 newBall2Vel = Vector2.Subtract(ball2Vel, Vector2.Multiply(Vector2.Subtract(ball2Pos, ball1Pos), (float)(Vector2.Dot(ball2Vel - ball1Vel, ball2Pos - ball1Pos) / Math.Pow(Vector2.Distance(ball2Pos, ball1Pos), 2))));
             ret.Ball1X = (double)newBall1Vel.X;
@@ -190,129 +157,103 @@ namespace Logic
             return ret;
         }
 
-        private Velocities CalculateNewVelocitiesNextFrame(BallApi ball1, BallApi ball2)
+    }
+    internal delegate bool CollisionDetection(BallApi ball1, BallApi ball2);
+
+    internal class CollisionCache
+    {
+        private List<CollisionPair> cache = new List<CollisionPair>();
+        private ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim();
+        private CollisionDetection AreBallsConnected;
+
+        public CollisionCache(CollisionDetection foo)
         {
-            Velocities ret = new Velocities();
-            Vector2 ball1Vel = new Vector2((float)ball1.XVelocity, (float)ball1.YVelocity);
-            Vector2 ball2Vel = new Vector2((float)ball2.XVelocity, (float)ball2.YVelocity);
-            Vector2 ball1Pos = new Vector2((float)(ball1.GetX() + ball1.XVelocity), (float)(ball1.GetY() + ball1.YVelocity));
-            Vector2 ball2Pos = new Vector2((float)ball2.GetX(), (float)ball2.GetY());
-
-
-
-            //TODO usunac
-
-
-
-            var a = Vector2.Multiply(Vector2.Subtract(ball1Pos, ball2Pos), (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2)));
-            var b = Vector2.Subtract(ball1Pos, ball2Pos);
-            var c = (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2));
-            Vector2 newBall1Vel = Vector2.Subtract(ball1Vel, Vector2.Multiply(Vector2.Subtract(ball1Pos, ball2Pos), (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2))));
-            Vector2 newBall2Vel = Vector2.Subtract(ball2Vel, Vector2.Multiply(Vector2.Subtract(ball2Pos, ball1Pos), (float)(Vector2.Dot(ball2Vel - ball1Vel, ball2Pos - ball1Pos) / Math.Pow(Vector2.Distance(ball2Pos, ball1Pos), 2))));
-            ret.Ball1X = (double)newBall1Vel.X;
-            ret.Ball1Y = (double)newBall1Vel.Y;
-            ret.Ball2X = (double)newBall2Vel.X;
-            ret.Ball2Y = (double)newBall2Vel.Y;
-            return ret;
+            AreBallsConnected = foo;
         }
-    }
-}
 
-internal delegate bool CollisionDetection(BallApi ball1, BallApi ball2);
-
-internal class CollisionCache
-{
-    private List<CollisionPair> cache = new List<CollisionPair>();
-    private ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim();
-    private CollisionDetection AreBallsConnected;
-
-    public CollisionCache(CollisionDetection foo)
-    {
-        AreBallsConnected = foo;
-    }
-
-    public void Add(BallApi ball1, BallApi ball2)
-    {
-        CollisionPair pair = new CollisionPair(ball1, ball2);
-        try
+        public void Add(BallApi ball1, BallApi ball2)
         {
-            lockSlim.EnterWriteLock();
-            cache.Add(pair);
-            Task.Run(() => { ClearCache(pair); });
-        }
-        finally { lockSlim.ExitWriteLock(); }
-    }
-
-    public bool Contains(BallApi ball1, BallApi ball2)
-    {
-        try
-        {
-            lockSlim.EnterReadLock();
-            foreach (CollisionPair collisionPair in cache)
-            {
-                if (collisionPair.Contains(ball1, ball2)) { return true; }
-            }
-            return false;
-        }
-        finally { lockSlim.ExitReadLock(); }
-    }
-
-    private async void ClearCache()
-    {
-        while (true)
-        {
+            CollisionPair pair = new CollisionPair(ball1, ball2);
             try
             {
                 lockSlim.EnterWriteLock();
-                if (cache.Count != 0) cache.RemoveAt(0);
+                cache.Add(pair);
+                Task.Run(() => { ClearCache(pair); });
+            }
+            finally { lockSlim.ExitWriteLock(); }
+        }
+
+        public bool Contains(BallApi ball1, BallApi ball2)
+        {
+            try
+            {
+                lockSlim.EnterReadLock();
+                foreach (CollisionPair collisionPair in cache)
+                {
+                    if (collisionPair.Contains(ball1, ball2)) { return true; }
+                }
+                return false;
+            }
+            finally { lockSlim.ExitReadLock(); }
+        }
+
+        private async void ClearCache()
+        {
+            while (true)
+            {
+                try
+                {
+                    lockSlim.EnterWriteLock();
+                    if (cache.Count != 0) cache.RemoveAt(0);
+                }
+                finally
+                {
+                    lockSlim.ExitWriteLock();
+                    await Task.Delay(25);
+                }
+            }
+        }
+
+        private async void ClearCache(CollisionPair pair)
+        {
+            while (AreBallsConnected(pair.ball1, pair.ball2))
+            {
+                await Task.Delay(20);
+            }
+            try
+            {
+                lockSlim.EnterWriteLock();
+                cache.Remove(pair);
             }
             finally
             {
                 lockSlim.ExitWriteLock();
-                await Task.Delay(25);
             }
         }
     }
 
-    private async void ClearCache(CollisionPair pair)
+    internal struct CollisionPair
     {
-        while (AreBallsConnected(pair.ball1, pair.ball2))
+        public BallApi ball1 { get; set; }
+        public BallApi ball2 { get; set; }
+
+        public CollisionPair(BallApi ball1, BallApi ball2)
         {
-            await Task.Delay(20);
+            this.ball1 = ball1;
+            this.ball2 = ball2;
         }
-        try
+
+        public bool Contains(BallApi ball1, BallApi ball2)
         {
-            lockSlim.EnterWriteLock();
-            cache.Remove(pair);
-        }
-        finally
-        {
-            lockSlim.ExitWriteLock();
+            return (Object.ReferenceEquals(this.ball1, ball2) && Object.ReferenceEquals(this.ball2, ball1)) || (Object.ReferenceEquals(this.ball1, ball1) && Object.ReferenceEquals(this.ball2, ball2));
         }
     }
-}
 
-internal struct CollisionPair
-{
-    public BallApi ball1 { get; set; }
-    public BallApi ball2 { get; set; }
-
-    public CollisionPair(BallApi ball1, BallApi ball2)
+    internal struct Velocities
     {
-        this.ball1 = ball1;
-        this.ball2 = ball2;
+        public double Ball1X { get; set; }
+        public double Ball2X { get; set; }
+        public double Ball1Y { get; set; }
+        public double Ball2Y { get; set; }
     }
-
-    public bool Contains(BallApi ball1, BallApi ball2)
-    {
-        return (Object.ReferenceEquals(this.ball1, ball2) && Object.ReferenceEquals(this.ball2, ball1)) || (Object.ReferenceEquals(this.ball1, ball1) && Object.ReferenceEquals(this.ball2, ball2));
-    }
-}
-
-internal struct Velocities
-{
-    public double Ball1X { get; set; }
-    public double Ball2X { get; set; }
-    public double Ball1Y { get; set; }
-    public double Ball2Y { get; set; }
 }
