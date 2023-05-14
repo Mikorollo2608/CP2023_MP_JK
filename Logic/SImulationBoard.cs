@@ -64,11 +64,11 @@ namespace Logic
 
         public override double GetX(int BallNumber)
         {
-            return Balls[BallNumber].GetX();
+            return Balls[BallNumber].X;
         }
         public override double GetY(int BallNumber)
         {
-            return Balls[BallNumber].GetY();
+            return Balls[BallNumber].Y;
         }
         public override int GetBallCount()
         {
@@ -139,10 +139,10 @@ namespace Logic
 
         private void KeepBallInbound(BallApi ball)
         {
-            if (ball.GetX() - ball.Radius < 0 && Math.Sign(ball.XVelocity) == -1) ball.XVelocity = -ball.XVelocity;
-            else if (ball.GetX() + ball.Radius > Box.Width && Math.Sign(ball.XVelocity) == 1) { ball.XVelocity = -ball.XVelocity; }
-            if (ball.GetY() - ball.Radius < 0 && Math.Sign(ball.YVelocity) == -1) { ball.YVelocity = -ball.YVelocity; }
-            else if (ball.GetY() + ball.Radius > Box.Height && Math.Sign(ball.YVelocity) == 1) { ball.YVelocity = -ball.YVelocity; }
+            if (ball.X - ball.Radius < 0 && Math.Sign(ball.XVelocity) == -1) ball.XVelocity = -ball.XVelocity;
+            else if (ball.X + ball.Radius > Box.Width && Math.Sign(ball.XVelocity) == 1) { ball.XVelocity = -ball.XVelocity; }
+            if (ball.Y - ball.Radius < 0 && Math.Sign(ball.YVelocity) == -1) { ball.YVelocity = -ball.YVelocity; }
+            else if (ball.Y + ball.Radius > Box.Height && Math.Sign(ball.YVelocity) == 1) { ball.YVelocity = -ball.YVelocity; }
             OnBallMoved(ball);
         }
 
@@ -158,7 +158,7 @@ namespace Logic
 
         internal static double CalculateBallsDistance(BallApi ball1, BallApi ball2)
         {
-            return Math.Sqrt(Math.Pow(ball1.GetX() - ball2.GetX(), 2) + Math.Pow(ball1.GetY() - ball2.GetY(), 2));
+            return Math.Sqrt(Math.Pow(ball1.X - ball2.X, 2) + Math.Pow(ball1.Y - ball2.Y, 2));
         }
 
         private Velocities CalculateNewVelocities(BallApi ball1, BallApi ball2)
@@ -166,8 +166,8 @@ namespace Logic
             Velocities ret = new Velocities();
             Vector2 ball1Vel = new Vector2((float)ball1.XVelocity, (float)ball1.YVelocity);
             Vector2 ball2Vel = new Vector2((float)ball2.XVelocity, (float)ball2.YVelocity);
-            Vector2 ball1Pos = new Vector2((float)ball1.GetX(), (float)ball1.GetY());
-            Vector2 ball2Pos = new Vector2((float)ball2.GetX(), (float)ball2.GetY());
+            Vector2 ball1Pos = new Vector2((float)ball1.X, (float)ball1.Y);
+            Vector2 ball2Pos = new Vector2((float)ball2.X, (float)ball2.Y);
             Vector2 newBall1Vel = Vector2.Subtract(ball1Vel, Vector2.Multiply(Vector2.Subtract(ball1Pos, ball2Pos), (float)(Vector2.Dot(ball1Vel - ball2Vel, ball1Pos - ball2Pos) / Math.Pow(Vector2.Distance(ball1Pos, ball2Pos), 2))));
             Vector2 newBall2Vel = Vector2.Subtract(ball2Vel, Vector2.Multiply(Vector2.Subtract(ball2Pos, ball1Pos), (float)(Vector2.Dot(ball2Vel - ball1Vel, ball2Pos - ball1Pos) / Math.Pow(Vector2.Distance(ball2Pos, ball1Pos), 2))));
             ret.Ball1X = (double)newBall1Vel.X;

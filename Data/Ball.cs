@@ -6,7 +6,6 @@ namespace Data
     {
         private BallEvent? BallPublisher;
         private bool IsSimulationRunning;
-
         private double x;
         private double y;
 
@@ -14,15 +13,14 @@ namespace Data
         public override double XVelocity { get; set; }
         public override double YVelocity { get; set; }
 
-        public override double GetX() { return x; }
-        public override double GetY() { return y; }
+        public override double X { get { return x; } }
+        public override double Y { get { return y; } }
 
-
-        public Ball(int BallRadius, double x, double y, double XVelocity, double YVelocity, BallEvent subscriber, bool IsSimulationRunning)
+        public Ball(int BallRadius, double X, double Y, double XVelocity, double YVelocity, BallEvent subscriber, bool IsSimulationRunning)
         {
             Radius = BallRadius;
-            this.x = x;
-            this.y = y;
+            this.x = X;
+            this.y = Y;
             this.XVelocity = XVelocity;
             this.YVelocity = YVelocity;
             BallPublisher = subscriber;

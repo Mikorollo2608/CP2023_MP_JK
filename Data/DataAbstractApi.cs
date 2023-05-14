@@ -7,8 +7,9 @@
         public abstract int Radius { get; }
         public abstract double XVelocity { get; set; }
         public abstract double YVelocity { get; set; }
-        public abstract double GetX();
-        public abstract double GetY();
+
+        public abstract double X { get; }
+        public abstract double Y { get; }
         public abstract void Start();
         public abstract void Stop();
 

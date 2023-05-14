@@ -25,7 +25,12 @@ namespace TestData
             int y = 230;
             double XVel = 3.5;
             double YVel = -4;
-            BallApi plane = BallApi.CreateNewBall(BallRadius, x, y, XVel, YVel, foo, false);
+            BallApi ball = BallApi.CreateNewBall(BallRadius, x, y, XVel, YVel, foo, false);
+            Assert.AreEqual(BallRadius, ball.Radius);
+            Assert.AreEqual(x, ball.X);
+            Assert.AreEqual(y, ball.Y);
+            Assert.AreEqual(XVel, ball.XVelocity);
+            Assert.AreEqual(YVel, ball.YVelocity);
         }
     }
 }
