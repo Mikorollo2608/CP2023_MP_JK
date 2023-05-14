@@ -60,5 +60,10 @@ namespace Data
         {
             IsSimulationRunning = false;
         }
+
+        public override void AddSubscriber(BallEvent sub)
+        {
+            BallPublisher += sub;
+        }
     }
 }

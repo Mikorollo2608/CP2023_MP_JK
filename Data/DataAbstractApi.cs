@@ -13,6 +13,8 @@
         public abstract void Start();
         public abstract void Stop();
 
+        public abstract void AddSubscriber(BallEvent sub);
+
         public static BallApi CreateNewBall(int BallRadius, double x, double y, double XVelocity, double YVelocity, BallEvent subscriber, bool IsSimulationRunning)
         {
             return new Ball(BallRadius, x, y, XVelocity, YVelocity, subscriber, IsSimulationRunning);

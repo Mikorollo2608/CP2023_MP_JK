@@ -38,6 +38,7 @@ namespace Logic
             try
             {
                 lockSlim.EnterWriteLock();
+                ball.AddSubscriber(KeepBallInbound);
                 Balls.Add(ball);
             }
             finally
