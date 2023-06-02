@@ -50,8 +50,8 @@ namespace Logic
         public override void CreateBall(int x, int y)
         {
 
-            double XVelocity = (rand.NextDouble() * 14) - 7;
-            double YVelocity = (rand.NextDouble() * 14) - 7;
+            double XVelocity = (rand.NextDouble() * 12) - 6;
+            double YVelocity = (rand.NextDouble() * 12) - 6;
             try
             {
                 lockSlim.EnterWriteLock();
@@ -140,10 +140,10 @@ namespace Logic
 
         private void KeepBallInbound(BallApi ball)
         {
-            if (ball.X - ball.Radius < 0 && Math.Sign(ball.XVelocity) == -1) ball.XVelocity = -ball.XVelocity;
-            else if (ball.X + ball.Radius > Box.Width && Math.Sign(ball.XVelocity) == 1) { ball.XVelocity = -ball.XVelocity; }
-            if (ball.Y - ball.Radius < 0 && Math.Sign(ball.YVelocity) == -1) { ball.YVelocity = -ball.YVelocity; }
-            else if (ball.Y + ball.Radius > Box.Height && Math.Sign(ball.YVelocity) == 1) { ball.YVelocity = -ball.YVelocity; }
+                if (ball.X - ball.Radius < 0 && Math.Sign(ball.XVelocity) == -1) ball.XVelocity = -ball.XVelocity;
+                else if (ball.X + ball.Radius > Box.Width && Math.Sign(ball.XVelocity) == 1) { ball.XVelocity = -ball.XVelocity; }
+                if (ball.Y - ball.Radius < 0 && Math.Sign(ball.YVelocity) == -1) { ball.YVelocity = -ball.YVelocity; }
+                else if (ball.Y + ball.Radius > Box.Height && Math.Sign(ball.YVelocity) == 1) { ball.YVelocity = -ball.YVelocity; }
             OnBallMoved(ball);
         }
 
