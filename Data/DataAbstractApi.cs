@@ -22,6 +22,15 @@
 
     }
 
+    public abstract class LoggerApi
+    {
+        public abstract void addToQueue(DateTime time, int ball1, int ball2);
+        public static LoggerApi CreateLogger(String fileName)
+        {
+            return new Logger(fileName);
+        }
+    }
+
     public abstract class MovementBoxApi
     {
         public abstract int Width { get; }
