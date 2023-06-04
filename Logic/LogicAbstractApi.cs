@@ -20,14 +20,14 @@ namespace Logic
         public abstract void Stop();
 
         //DI
-        public static LogicAbstractApi CreateLogicApi(MovementBoxApi Box, int Radius, BallPositionEvent Subscriber)
+        public static LogicAbstractApi CreateLogicApi(MovementBoxApi Box, int Radius, BallPositionEvent Subscriber, LoggerApi logger)
         {
-            return new SimulationBoard(Box, Radius, Subscriber);
+            return new SimulationBoard(Box, Radius, Subscriber, logger);
         }
 
-        public static LogicAbstractApi CreateLogicApi(int BallRadius, int BoardWidth, int BoardHeight, BallPositionEvent Subscriber)
+        public static LogicAbstractApi CreateLogicApi(int BallRadius, int BoardWidth, int BoardHeight, BallPositionEvent Subscriber, String fileName)
         {
-            return new SimulationBoard(BallRadius, BoardWidth, BoardHeight, Subscriber);
+            return new SimulationBoard(BallRadius, BoardWidth, BoardHeight, Subscriber, fileName);
         }
     }
 

@@ -69,7 +69,7 @@ namespace TestLogic
             TestBall b2 = new TestBall(10, 85, 50, 3, 0);
             TestBall b3 = new TestBall(10, 50, 15, 0, -3);
             TestBall b4 = new TestBall(10, 50, 85, 0, 3);
-            LogicAbstractApi board = LogicAbstractApi.CreateLogicApi(new TestMovementBox(100, 100), 10, null);
+            LogicAbstractApi board = LogicAbstractApi.CreateLogicApi(new TestMovementBox(100, 100), 10, null, null);
             board.CreateBall(b1);
             board.CreateBall(b2);
             board.CreateBall(b3);
@@ -108,7 +108,7 @@ namespace TestLogic
         {
             TestBall b1 = new TestBall(10, 30, 50, 3, 0);
             TestBall b2 = new TestBall(10, 51, 50, -3, 0);
-            LogicAbstractApi board = LogicAbstractApi.CreateLogicApi(new TestMovementBox(100, 100), 10, null);
+            LogicAbstractApi board = LogicAbstractApi.CreateLogicApi(new TestMovementBox(100, 100), 10, null, null);
             board.CreateBall(b1);
             board.CreateBall(b2);
 

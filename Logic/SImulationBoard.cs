@@ -15,23 +15,26 @@ namespace Logic
         private MovementBoxApi Box;
         private ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim();
         private CollisionCache cache;
+        private LoggerApi logger;
 
-        public SimulationBoard(MovementBoxApi Box, int Radius, BallPositionEvent Subscriber)
+        public SimulationBoard(MovementBoxApi Box, int Radius, BallPositionEvent Subscriber, LoggerApi logger)
         {
             this.Box = Box;
             BallRadius = Radius;
             BallMoved += Subscriber;
             TriggerCollisions += BallsColisions;
             cache = new CollisionCache(CheckForCollision);
+            this.logger = logger;
         }
 
-        public SimulationBoard(int Radius, int Width, int Height, BallPositionEvent Subscriber)
+        public SimulationBoard(int Radius, int Width, int Height, BallPositionEvent Subscriber, String fileName)
         {
             Box = MovementBoxApi.CreateBox(Width, Height);
             BallRadius = Radius;
             BallMoved += Subscriber;
             TriggerCollisions += BallsColisions;
             cache = new CollisionCache(CheckForCollision);
+            logger = LoggerApi.CreateLogger(fileName);
         }
         public override void CreateBall(BallApi ball)
         {
@@ -121,6 +124,7 @@ namespace Logic
                                 ball.YVelocity = vel.Ball1Y;
                                 b.XVelocity = vel.Ball2X;
                                 b.YVelocity = vel.Ball2Y;
+                                logger.addToQueue(DateTime.Now, Balls.IndexOf(b), Balls.IndexOf(ball));
                                 b.Start();
                                 ball.Start();
                                 break;
@@ -140,10 +144,10 @@ namespace Logic
 
         private void KeepBallInbound(BallApi ball)
         {
-                if (ball.X - ball.Radius < 0 && Math.Sign(ball.XVelocity) == -1) ball.XVelocity = -ball.XVelocity;
-                else if (ball.X + ball.Radius > Box.Width && Math.Sign(ball.XVelocity) == 1) { ball.XVelocity = -ball.XVelocity; }
-                if (ball.Y - ball.Radius < 0 && Math.Sign(ball.YVelocity) == -1) { ball.YVelocity = -ball.YVelocity; }
-                else if (ball.Y + ball.Radius > Box.Height && Math.Sign(ball.YVelocity) == 1) { ball.YVelocity = -ball.YVelocity; }
+            if (ball.X - ball.Radius < 0 && Math.Sign(ball.XVelocity) == -1) ball.XVelocity = -ball.XVelocity;
+            else if (ball.X + ball.Radius > Box.Width && Math.Sign(ball.XVelocity) == 1) { ball.XVelocity = -ball.XVelocity; }
+            if (ball.Y - ball.Radius < 0 && Math.Sign(ball.YVelocity) == -1) { ball.YVelocity = -ball.YVelocity; }
+            else if (ball.Y + ball.Radius > Box.Height && Math.Sign(ball.YVelocity) == 1) { ball.YVelocity = -ball.YVelocity; }
             OnBallMoved(ball);
         }
 

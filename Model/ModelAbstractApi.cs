@@ -44,7 +44,7 @@ namespace Model
             this.BallRadius = BallRadius;
             this.BoardWidth = BoardWidth;
             this.BoardHeight = BoardHeight;
-            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth, this.BoardHeight, Move);
+            Simulation = LogicAbstractApi.CreateLogicApi(this.BallRadius, this.BoardWidth, this.BoardHeight, Move, "log.txt");
             Canvas = new Canvas();
             Border = new Border();
             Canvas.Width = this.BoardWidth;
