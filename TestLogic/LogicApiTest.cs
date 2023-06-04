@@ -55,6 +55,15 @@ namespace TestLogic
         }
     }
 
+    internal class TestLogger : LoggerApi
+    {
+        public TestLogger() { }
+
+        public override void addToQueue(DateTime time, int ball1, int ball2)
+        {
+        }
+    }
+
     [TestClass]
     public class LogicApiTest
     {
@@ -108,7 +117,7 @@ namespace TestLogic
         {
             TestBall b1 = new TestBall(10, 30, 50, 3, 0);
             TestBall b2 = new TestBall(10, 51, 50, -3, 0);
-            LogicAbstractApi board = LogicAbstractApi.CreateLogicApi(new TestMovementBox(100, 100), 10, null, null);
+            LogicAbstractApi board = LogicAbstractApi.CreateLogicApi(new TestMovementBox(100, 100), 10, null, new TestLogger());
             board.CreateBall(b1);
             board.CreateBall(b2);
 
