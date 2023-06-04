@@ -52,7 +52,6 @@ namespace Data
                     x += XVelocity;
                     y += YVelocity;
                     OnBallMoved();
-                    Debug.Write(12+(int)Math.Floor(50 / (velocityLength*2)) + "\n");
                     await Task.Delay(12+(int)Math.Floor(50/ (velocityLength*2)));
                 }
                 else
